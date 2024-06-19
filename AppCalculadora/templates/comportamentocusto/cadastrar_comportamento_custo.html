@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% load form_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="page-title">Cadastrar Novo Comportamento de Custo</h1>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_nome" class="form-label">Nome</label>
+            {{ form.nome|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_exemplos" class="form-label">Exemplos</label>
+            {{ form.exemplos|add_class:"form-control" }}
+        </div>
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'listarComportamentoCusto' %}" class="btn btn-secondary">Voltar</a>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

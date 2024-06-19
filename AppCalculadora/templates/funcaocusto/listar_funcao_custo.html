@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Listagem de Funções de Custo</h1>
+    <a href="{% url 'cadastrarFuncaoCusto' %}" class="btn btn-success mb-3">Cadastrar Nova Função de Custo</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Exemplos</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for funcao_custo in funcoes_custo %}
+            <tr>
+                <td>{{ funcao_custo.nome }}</td>
+                <td>{{ funcao_custo.exemplos }}</td>
+                <td>
+                    <a href="{% url 'editarFuncaoCusto' funcao_custo.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                </td>    
+                <td>                    
+                    <a href="{% url 'excluirFuncaoCusto' funcao_custo.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

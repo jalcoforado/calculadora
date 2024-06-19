@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="page-title">Excluir Custo</h1>
+    <p>Você tem certeza que deseja excluir o custo "{{ custo.descricao }}"?</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'listarCusto' %}" class="btn btn-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-danger">Excluir</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

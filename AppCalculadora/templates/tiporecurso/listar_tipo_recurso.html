@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+    <h1 class="page-title">Listagem de Tipos de Recurso</h1>
+    <a href="{% url 'cadastrarTipoRecurso' %}" class="btn btn-success mb-3">Cadastrar Novo Tipo de Recurso</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome do Tipo de Recurso</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tipo_recurso in tipos_recurso %}
+            <tr>
+                <td>{{ tipo_recurso.nome }}</td>
+                <td>
+                    <a href="{% url 'editarTipoRecurso' tipo_recurso.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                    <a href="{% url 'excluirTipoRecurso' tipo_recurso.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

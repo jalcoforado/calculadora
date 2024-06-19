@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% load form_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="page-title">Cadastrar Novo Custo</h1>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_descricao" class="form-label">Descrição</label>
+            {{ form.descricao|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_tipo_custo" class="form-label">Tipo de Custo</label>
+            {{ form.tipo_custo|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_funcao_custo" class="form-label">Função de Custo</label>
+            {{ form.funcao_custo|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_comportamento_custo" class="form-label">Comportamento de Custo</label>
+            {{ form.comportamento_custo|add_class:"form-control" }}
+        </div>
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'listarCusto' %}" class="btn btn-secondary">Voltar</a>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% load form_tags %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="page-title">Editar Recurso</h1>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_tipo_recurso" class="form-label">Tipo de Recurso</label>
+            {{ form.tipo_recurso|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_descricao" class="form-label">Descrição</label>
+            {{ form.descricao|add_class:"form-control" }}
+        </div>
+        <div class="mb-3">
+            <label for="id_detalhes" class="form-label">Detalhes</label>
+            {{ form.detalhes|add_class:"form-control" }}
+        </div>
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'listarRecurso' %}" class="btn btn-secondary">Voltar</a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+from django.urls import path
+from . import views
+
+urlpatterns = [
+path('', views.index, name='index'),
+# Add more URL patterns here
+]
+{% block title %}
+Página Inicial
+{% endblock %}
+{% block content %}
+<div class="container">
+
+    <div class="container">
+      <div class="text-center">
+        <div class="container">
+          <div class="text-center" style="margin-top: 200px;">
+            <h1>Seja bem-vindo ao sistema de calculadora! Versão 1.0</h1>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+</div>
+  {% endblock %}

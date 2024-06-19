@@ -1,0 +1,38 @@
+body {
+    background-color: #f8f9fa; /* Fundo branco suave */
+    color: #212529; /* Cor do texto */
+}
+
+header, .navbar-dark {
+    background-color: #fff200; /* Azul para o cabeçalho */
+    color: #ffffff; /* Texto branco */
+}
+
+.navbar-brand, .nav-link, .btn-light {
+    color: #ffffff !important; /* Texto branco */
+}
+
+.btn-primary {
+    background-color: #0056b3; /* Azul mais escuro para os botões primários */
+    border-color: #0056b3;
+}
+
+.btn-alternative {
+    background-color: #4eb300; /* Azul mais escuro para os botões primários */
+    border-color: #4eb300;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #004085; /* Azul ainda mais escuro para o hover e foco */
+    border-color: #004085;
+}
+
+.alert-success {
+    background-color: #d4edda; /* Fundo verde claro para alertas de sucesso */
+    color: #155724; /* Texto verde escuro */
+}
+
+.alert-error {
+    background-color: #d4edda; /* Fundo verde claro para alertas de sucesso */
+    color: #573a15; /* Texto verde escuro */
+}

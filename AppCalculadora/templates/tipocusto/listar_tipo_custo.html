@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Listagem de Tipos de Custo</h1>
+    <a href="{% url 'cadastrarTipoCusto' %}" class="btn btn-success mb-3">Cadastrar Novo Tipo de Custo</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tipo_custo in tipos_custo %}
+            <tr>
+                <td>{{ tipo_custo.nome }}</td>
+                <td>{{ tipo_custo.descricao }}</td>
+                <td>
+                    <a href="{% url 'editarTipoCusto' tipo_custo.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                 </td>   
+                <td>
+                    <a href="{% url 'excluirTipoCusto' tipo_custo.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

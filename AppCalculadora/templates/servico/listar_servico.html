@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Listagem de Serviços</h1>
+    <a href="{% url 'cadastrarServico' %}" class="btn btn-success mb-3">Cadastrar Novo Serviço</a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Recursos</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for servico in servicos %}
+            <tr>
+                <td>{{ servico.nome }}</td>
+                <td>{{ servico.descricao }}</td>
+                <td>
+                    {% for recurso in servico.recursos.all %}
+                        {{ recurso.descricao }}<br>
+                    {% endfor %}
+                </td>
+                <td>
+                    <a href="{% url 'editarServico' servico.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                    <a href="{% url 'excluirServico' servico.pk %}" class="btn btn-danger btn-sm">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

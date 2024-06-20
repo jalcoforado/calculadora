@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Calcular Custo do Data Center{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="page-title">Calcular Custo do Data Center</h1>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="id_region" class="form-label">Região</label>
+                {{ form.region }}
+            </div>
+            <div class="col-md-6">
+                <label for="id_vm_type" class="form-label">Tipo de VM</label>
+                {{ form.vm_type }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="id_num_vms" class="form-label">Quantidade de VMs</label>
+                {{ form.num_vms }}
+            </div>
+            <div class="col-md-6">
+                <label for="id_os" class="form-label">Sistema Operacional</label>
+                {{ form.os }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="id_storage_type" class="form-label">Tipo de Armazenamento</label>
+                {{ form.storage_type }}
+            </div>
+            <div class="col-md-6">
+                <label for="id_disk_size" class="form-label">Tamanho do Disco</label>
+                {{ form.disk_size }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="id_num_disks" class="form-label">Quantidade de Discos</label>
+                {{ form.num_disks }}
+            </div>
+            <div class="col-md-6">
+                <label for="id_num_ips" class="form-label">Quantidade de IPs Públicos</label>
+                {{ form.num_ips }}
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="id_ip_type" class="form-label">Tipo de IP</label>
+                {{ form.ip_type }}
+            </div>
+            <div class="col-md-6">
+                <label for="id_hours_per_month" class="form-label">Horas por mês</label>
+                {{ form.hours_per_month }}
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'home' %}" class="btn btn-secondary">Voltar</a>
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </div>
+    </form>
+
+    {% if total_cost %}
+    <div class="alert alert-info mt-4" role="alert">
+        <h2>Total Estimado: ${{ total_cost }}</h2>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

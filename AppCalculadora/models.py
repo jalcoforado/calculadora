@@ -81,9 +81,55 @@ class EmpresaCusto(models.Model):
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     custo = models.ForeignKey(Custo, on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=12, decimal_places=2) 
-    periodicidade = models.CharField(default="mensal", max_length=255, choices=[('diário', 'Diário'), ('mensal', 'Mensal'), ('anual', 'Anual')])
+    periodicidade = models.CharField(default="mensal", max_length=255, choices=[('mensal', 'Mensal'), ('anual', 'Anual')])
     data_inicio = models.DateField(default=datetime.date.today)
     data_fim = models.DateField(null=True, blank=True)
 
     def __str__(self):
        return f"{self.empresa.nome} - {self.custo}"
+
+
+
+class CustoDataCenter(models.Model):
+    REGION_CHOICES = [
+        ('DataCenter1', 'Data Center Sefin'),
+        ('DataCenter2', 'Data Center Sepog'),
+    ]
+    
+    VM_TYPE_CHOICES = [
+        ('standard_b1s', 'Standard B1s'),
+        ('standard_d2s_v3', 'Standard D2s v3'),
+        # Adicione outros tipos de VM aqui
+    ]
+    
+    OS_CHOICES = [
+        ('linux', 'Linux'),
+        ('windows', 'Windows'),
+    ]
+    
+    STORAGE_TYPE_CHOICES = [
+        ('standard_hdd', 'Standard HDD'),
+        ('premium_ssd', 'Premium SSD'),
+    ]
+    
+    IP_TYPE_CHOICES = [
+        ('dynamic', 'Dynamic IP'),
+        ('static', 'Static IP'),
+    ]
+
+    region = models.CharField(max_length=50, choices=REGION_CHOICES)
+    vm_type = models.CharField(max_length=50, choices=VM_TYPE_CHOICES)
+    num_vms = models.IntegerField()
+    os = models.CharField(max_length=50, choices=OS_CHOICES)
+    storage_type = models.CharField(max_length=50, choices=STORAGE_TYPE_CHOICES)
+    disk_size = models.CharField(max_length=50)
+    num_disks = models.IntegerField()
+    num_ips = models.IntegerField()
+    ip_type = models.CharField(max_length=50, choices=IP_TYPE_CHOICES)
+    hours_per_month = models.IntegerField()
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.vm_type} - {self.region} - {self.total_cost}"
+
+

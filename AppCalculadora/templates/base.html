@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
+
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -16,14 +17,19 @@
     <header>
         <div class="px-3 py-2 bg-primary text-white border-bottom">
             <div class="container">
-                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-                    <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
-                        <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
-                            <use xlink:href="#bootstrap" />
-                        </svg>
-                        <span class="fs-4">Calculadora de Custos</span>
-                    </a>
 
+                <a href="/" class="d-flex align-items-center my-2 my-lg-0 me-lg-auto text-white text-decoration-none">
+                    <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap">
+                        <use xlink:href="#bootstrap" />
+                    </svg>
+                    <span class="fs-4">Calculadora de Custos</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="px-3 py-2 bg-primary text-white border-bottom">
+            <div class="container">
+                <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                     <ul class="nav col-12 col-lg-auto my-2 justify-content-center my-md-0 text-small">
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button"
@@ -32,21 +38,40 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                                 <li><a class="dropdown-item" href="{% url 'listarEmpresa' %}">Empresas</a></li>
-                                <li><a class="dropdown-item" href="{% url 'listarTipoRecurso' %}">Tipo de Recurso</a></li>
-                                <li><a class="dropdown-item" href="{% url 'listarRecurso' %}">Recurso</a></li>                                
+                                <li><a class="dropdown-item" href="{% url 'listarTipoRecurso' %}">Tipo de
+                                        Recurso</a>
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'listarRecurso' %}">Recurso</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="{% url 'listarServico' %}">Serviço</a></li>                                
+                                <li><a class="dropdown-item" href="{% url 'listarServico' %}">Serviço</a></li>
                                 <li>
                                     <hr class="dropdown-divider">
                                 </li>
-                                <li><a class="dropdown-item" href="{% url 'listarCusto' %}">Custo</a></li>                                                                
-                                <li><a class="dropdown-item" href="{% url 'listarTipoCusto' %}">Tipo de Custo</a></li>                                           
-                                <li><a class="dropdown-item" href="{% url 'listarFuncaoCusto' %}">Função do Custo</a></li>                                
-                                <li><a class="dropdown-item" href="{% url 'listarComportamentoCusto' %}">Comportamento Custo</a></li>                                                                
+                                <li><a class="dropdown-item" href="{% url 'listarCusto' %}">Custo</a></li>
+                                <li><a class="dropdown-item" href="{% url 'listarTipoCusto' %}">Tipo de
+                                        Custo</a></li>
+                                <li><a class="dropdown-item" href="{% url 'listarFuncaoCusto' %}">Função do
+                                        Custo</a>
+                                </li>
+                                <li><a class="dropdown-item" href="{% url 'listarComportamentoCusto' %}">Comportamento
+                                        Custo</a></li>
+
+
                             </ul>
                         </li>
+                        <li>
+                            <a class="nav-link text-white" href="{% url 'calcularCustoDatacenter' %}">Calculo
+                                Custo</a>
+                        </li>
+                        <li>
+                            <a class="nav-link text-white" href="{% url 'listarEmpresaCusto' %}">Lançamento
+                                Custo
+                                da Empresa</a>
+                        </li>
+                        <li class="nav-item">
+
                         <li class="nav-item">
                             <a href="#" class="nav-link text-white">
                                 DashBoard
@@ -103,4 +128,5 @@
         });
     </script>
 </body>
+
 </html>

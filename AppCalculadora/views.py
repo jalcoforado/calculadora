@@ -1,7 +1,8 @@
+from urllib import request
 from django.shortcuts import get_object_or_404, redirect, render
-from AppCalculadora.form import ComportamentoCustoForm, CustoForm, EmpresaForm, FuncaoCustoForm, TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
+from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
 from django.contrib import messages
-from AppCalculadora.models  import ComportamentoCusto, Custo, TipoCusto, TipoRecurso, Recurso, Servico
+from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, TipoCusto, TipoRecurso, Recurso, Servico
 from AppCalculadora.models  import Empresa, FuncaoCusto, ServicoRecurso
 
 
@@ -323,3 +324,122 @@ def excluir_custo(request, pk):
         messages.success(request, 'Custo excluído com sucesso!')
         return redirect('listarCusto')
     return render(request, 'custo/excluir_custo.html', {'custo': custo})
+
+
+# Funções Calculadora
+def calcular_custo_datacenter(request):
+    if request.method == 'POST':
+        form = DataCenterCostForm(request.POST)
+        if form.is_valid():
+            region = form.cleaned_data['region']
+            vm_type = form.cleaned_data['vm_type']
+            num_vms = form.cleaned_data['num_vms']
+            os = form.cleaned_data['os']
+            storage_type = form.cleaned_data['storage_type']
+            disk_size = form.cleaned_data['disk_size']
+            num_disks = form.cleaned_data['num_disks']
+            num_ips = form.cleaned_data['num_ips']
+            ip_type = form.cleaned_data['ip_type']
+            hours_per_month = form.cleaned_data['hours_per_month']
+            
+            # Simulação de cálculo de custo
+            base_cost_per_hour = {
+                'standard_b1s': 0.02,
+                'standard_d2s_v3': 0.10,
+                # Adicione outros tipos de VM e seus custos aqui
+            }
+            
+            storage_cost_per_gb = {
+                'standard_hdd': 0.001,
+                'premium_ssd': 0.002,
+                # Adicione outros tipos de armazenamento e seus custos aqui
+            }
+            
+            ip_cost_per_hour = {
+                'dynamic': 0.003,
+                'static': 0.005,
+                # Adicione outros tipos de IP e seus custos aqui
+            }
+            
+            cost_per_hour = base_cost_per_hour.get(vm_type, 0)
+            storage_cost = storage_cost_per_gb.get(storage_type, 0) * int(disk_size)
+            ip_cost = ip_cost_per_hour.get(ip_type, 0)
+            
+            total_vm_cost = cost_per_hour * num_vms * hours_per_month
+            total_storage_cost = storage_cost * num_disks * hours_per_month
+            total_ip_cost = ip_cost * num_ips * hours_per_month
+            
+            total_cost = total_vm_cost + total_storage_cost + total_ip_cost
+
+            # Salvar no banco de dados
+            custo_data_center = CustoDataCenter(
+                region=region,
+                vm_type=vm_type,
+                num_vms=num_vms,
+                os=os,
+                storage_type=storage_type,
+                disk_size=disk_size,
+                num_disks=num_disks,
+                num_ips=num_ips,
+                ip_type=ip_type,
+                hours_per_month=hours_per_month,
+                total_cost=total_cost
+            )
+            custo_data_center.save()
+            
+            context = {
+                'form': form,
+                'total_cost': total_cost,
+            }
+            return render(request, 'calculadoracusto/calcular_custo_datacenter.html', context)
+    else:
+        form = DataCenterCostForm()
+    
+    return render(request, 'calculadoracusto/calcular_custo_datacenter.html', {'form': form})
+
+# Funções Empresa Custo
+def cadastrar_empresa_custo(request):
+    if request.method == 'POST':
+        form = EmpresaCustoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listarEmpresaCusto')
+    else:
+        form = EmpresaCustoForm()
+    
+    return render(request, 'empresacusto/cadastrar_empresa_custo.html', {'form': form})
+
+
+def listar_empresa_custo(request):
+    empresa_id = request.GET.get('empresa')
+    if empresa_id:
+        empresacustos = EmpresaCusto.objects.filter(empresa_id=empresa_id)
+    else:
+        empresacustos = EmpresaCusto.objects.all()
+
+    empresas = Empresa.objects.all()
+
+    return render(request, 'empresacusto/listar_empresa_custo.html', {
+        'empresacustos': empresacustos,
+        'empresas': empresas,
+    })
+
+
+def editar_empresa_custo(request, pk):
+    empresacusto = get_object_or_404(EmpresaCusto, pk=pk)
+    if request.method == 'POST':
+        form = EmpresaCustoForm(request.POST, instance= empresacusto)
+        if form.is_valid():
+            form.save()
+            return redirect('listarEmpresaCusto')
+    else:
+        form = EmpresaCustoForm(instance=empresacusto)
+    
+    return render(request, 'empresacusto/editar_empresa_custo.html', {'form': form, 'custo': custo})
+
+def excluir_empresa_custo(request, pk):
+    empresacusto = get_object_or_404(EmpresaCusto, pk=pk)
+    if request.method == 'POST':
+        custo.delete()
+        return redirect('listarEmpresaCusto')
+    return render(request, 'empresacusto/excluir_empresa_custo.html', {'empresacusto': empresacusto})

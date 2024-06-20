@@ -55,6 +55,16 @@ urlpatterns = [
     path('editarcusto/<int:pk>/', views.editar_custo, name='editarCusto'),
     path('excluircusto/<int:pk>/', views.excluir_custo, name='excluirCusto'), 
 
+    # Módulo Empresa Custo   
+    path('cadastrarempresacusto/', views.cadastrar_empresa_custo, name='cadastrarEmpresaCusto'),
+    path('listarempresacusto/', views.listar_empresa_custo, name='listarEmpresaCusto'),
+    path('editarempresacusto/<int:pk>/', views.editar_empresa_custo, name='editarEmpresaCusto'),
+    path('excluirempresacusto/<int:pk>/', views.excluir_empresa_custo, name='excluirEmpresaCusto'),
+
+    # Módulo Calculo do Custo
+    path('calcularcusto/', views.calcular_custo_datacenter, name='calcularCustoDatacenter'),
+    #
+
 ]
 
 

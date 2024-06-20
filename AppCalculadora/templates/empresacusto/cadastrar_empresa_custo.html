@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Cadastrar Custo da Empresa{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="page-title">Cadastrar Custo da Empresa</h1>
+    <form method="post" class="mt-4">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_empresa" class="form-label">Empresa</label>
+                {{ form.empresa }}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_custo" class="form-label">Custo</label>
+                {{ form.custo }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_valor" class="form-label">Valor</label>
+                {{ form.valor }}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_periodicidade" class="form-label">Periodicidade</label>
+                {{ form.periodicidade }}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_data_inicio" class="form-label">Data Início</label>
+                {{ form.data_inicio }}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_data_fim" class="form-label">Data Fim</label>
+                {{ form.data_fim }}
+            </div>
+        </div>
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{% url 'listarEmpresaCusto' %}" class="btn btn-secondary">Voltar</a>
+            <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

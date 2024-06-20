@@ -1,4 +1,5 @@
 from cmath import e
+from datetime import date
 from django import forms
 from .models import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, TipoCusto, FuncaoCusto
 from .models import Empresa, TipoRecurso, Recurso, Servico, ServicoRecurso
@@ -68,6 +69,8 @@ class DataCenterCostForm(forms.ModelForm):
         }
 
 class EmpresaCustoForm(forms.ModelForm):
+    data_inicio = forms.DateField(initial=date(date.today().year, 1, 1))
+    data_fim = forms.DateField(initial=date(date.today().year, 12, 31))
     class Meta:
         model = EmpresaCusto
         fields = ['empresa', 'custo', 'valor', 'periodicidade', 'data_inicio', 'data_fim']
@@ -79,3 +82,7 @@ class EmpresaCustoForm(forms.ModelForm):
             'data_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'data_fim': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
         }        
+
+
+
+        

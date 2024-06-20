@@ -78,8 +78,8 @@ class Custo(models.Model):
         return f"{self.descricao}"
 
 class EmpresaCusto(models.Model):
-    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
-    custo = models.ForeignKey(Custo, on_delete=models.CASCADE)
+    empresa = models.ForeignKey(Empresa, on_delete=models.RESTRICT, related_name="empresa_custos")
+    custo = models.ForeignKey(Custo, on_delete=models.RESTRICT)
     valor = models.DecimalField(max_digits=12, decimal_places=2) 
     periodicidade = models.CharField(default="mensal", max_length=255, choices=[('mensal', 'Mensal'), ('anual', 'Anual')])
     data_inicio = models.DateField(default=datetime.date.today)

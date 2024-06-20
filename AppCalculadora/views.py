@@ -4,6 +4,7 @@ from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCos
 from django.contrib import messages
 from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, TipoCusto, TipoRecurso, Recurso, Servico
 from AppCalculadora.models  import Empresa, FuncaoCusto, ServicoRecurso
+from django.db.models import RestrictedError
 
 
 def home(request):
@@ -44,11 +45,13 @@ def editar_empresa(request, pk):
 def excluir_empresa(request, pk):
     empresa = get_object_or_404(Empresa, pk=pk)
     if request.method == 'POST':
-        empresa.delete()
-        messages.success(request, 'Registro excluído com sucesso!')
+        try:
+            empresa.delete()
+            messages.success(request, 'Registro excluído com sucesso!')
+        except RestrictedError:  
+                messages.error(request, 'Não é possível excluir esta empresa porque ela está sendo referenciada por um custo.')
         return redirect('listarEmpresa')
     return render(request, 'empresa/excluir_empresa.html', {'empresa': empresa})
-
 
 # Funções do Tipo de Recurso 
 
@@ -440,6 +443,12 @@ def editar_empresa_custo(request, pk):
 def excluir_empresa_custo(request, pk):
     empresacusto = get_object_or_404(EmpresaCusto, pk=pk)
     if request.method == 'POST':
-        custo.delete()
+        try:
+            empresacusto.delete()
+            messages.success(request, 'Empresa excluída com sucesso.')
+        except RestrictedError:
+            messages.error(request, 'Não é possível excluir esta empresa porque ela está sendo referenciada por um custo.')
         return redirect('listarEmpresaCusto')
     return render(request, 'empresacusto/excluir_empresa_custo.html', {'empresacusto': empresacusto})
+
+

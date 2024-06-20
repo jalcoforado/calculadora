@@ -40,7 +40,7 @@
             {% for empresacusto in empresacustos %}
             <tr>
                 <td>{{ empresacusto.empresa.nome }}</td>
-                <td style="width: auto; font-size: 10 px;">{{ empresacusto.custo.descricao }}</td>
+                <td>{{ empresacusto.custo.descricao }} ({{ empresacusto.custo.comportamento_custo.nome }} - {{ empresacusto.custo.tipo_custo.nome }} - {{ empresacusto.custo.funcao_custo.nome }} )</td>                
                 <td style="width: auto; font-size: 10 px;">{{ empresacusto.valor|currency }}</td>  
                 <td>{{ empresacusto.get_periodicidade_display }}</td>
                 <td>{{ empresacusto.data_inicio }}</td>

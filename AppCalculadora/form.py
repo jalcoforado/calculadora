@@ -24,7 +24,11 @@ class RecursoForm(forms.ModelForm):
 class ServicoRecursoForm(forms.ModelForm):
     class Meta:
         model = ServicoRecurso
-        fields = ['recurso', 'quantidade']        
+        fields = ['recurso', 'quantidade']
+        widgets = {
+            'recurso': forms.Select(attrs={'class': 'form-control'}),
+            'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
+        }       
 
 class ServicoForm(forms.ModelForm):
     class Meta:

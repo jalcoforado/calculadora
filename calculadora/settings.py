@@ -17,6 +17,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -39,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',    
     'django.contrib.staticfiles',
-    'AppCalculadora',  # Adicione seu app aqui
+    'django_extensions',
+    'schema_graph',        
+    'AppCalculadora',  # App
 ]
 
 MIDDLEWARE = [
@@ -138,3 +141,8 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+GRAPH_MODELS = {
+  'all_applications': True,
+  'group_models': True,
+}

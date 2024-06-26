@@ -96,11 +96,12 @@ class EmpresaCustoForm(forms.ModelForm):
             'empresa': forms.Select(attrs={'class': 'form-control'}),
             'custo': forms.Select(attrs={'class': 'form-control'}),
             'valor': forms.NumberInput(attrs={'class': 'form-control'}),
-            'periodicidade': forms.Select(attrs={'class': 'form-control'}),
+            'periodicidade': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
             'data_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'data_fim': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-        }        
-
+            
+        }   
+         
 
 
         

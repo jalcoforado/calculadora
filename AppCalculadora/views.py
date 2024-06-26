@@ -438,7 +438,7 @@ def editar_empresa_custo(request, pk):
     else:
         form = EmpresaCustoForm(instance=empresacusto)
     
-    return render(request, 'empresacusto/editar_empresa_custo.html', {'form': form, 'custo': custo})
+    return render(request, 'empresacusto/editar_empresa_custo.html', {'form': form, 'empresacusto': empresacusto})
 
 def excluir_empresa_custo(request, pk):
     empresacusto = get_object_or_404(EmpresaCusto, pk=pk)

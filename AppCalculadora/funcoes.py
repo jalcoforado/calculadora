@@ -31,11 +31,11 @@ def calcular_custo_unitario_e_preco_venda(custo, carga_trabalho_total):
 
 # Exemplo de carga de trabalho total (em horas de CPU, armazenamento em GB, etc.)
 carga_trabalho_total = {
-    'VMs': 20000,  # horas de CPU
-    'Armazenamento': 100000,  # GB
-    'Backup e Recuperação': 50000,  # GB
-    'Rede': 10000,  # GB transferidos
-    'Segurança': 5000  # eventos monitorados
+    'VMs': 11335680,  # horas de CPU
+    'Armazenamento': 256000,  # GB
+    'Backup e Recuperação': 5000000,  # GB
+    'Rede': 1000000,  # GB transferidos
+    'Segurança': 500000  # eventos monitorados
 }
 
 # Calcular e exibir os custos unitários e preços de venda para cada recurso

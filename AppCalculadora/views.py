@@ -1,8 +1,8 @@
 from urllib import request
 from django.shortcuts import get_object_or_404, redirect, render
-from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
+from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, RecursoDataCenterForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
 from django.contrib import messages
-from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, TipoCusto, TipoRecurso, Recurso, Servico
+from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, RecursoDataCenter, TipoCusto, TipoRecurso, Recurso, Servico
 from AppCalculadora.models  import Empresa, FuncaoCusto, ServicoRecurso
 from django.db.models import RestrictedError
 
@@ -407,6 +407,8 @@ def cadastrar_empresa_custo(request):
         if form.is_valid():
             form.save()
             return redirect('listarEmpresaCusto')
+        else:
+            print(form.errors, form.error_class)
     else:
         form = EmpresaCustoForm()
     
@@ -452,3 +454,41 @@ def excluir_empresa_custo(request, pk):
     return render(request, 'empresacusto/excluir_empresa_custo.html', {'empresacusto': empresacusto})
 
 
+
+# 2 passo do modelo 
+
+def listar_recurso_datacenter(request):
+    empresa_id = request.GET.get('empresa')
+    if empresa_id:
+        recursosDataCenter = RecursoDataCenter.objects.filter(empresa__id=empresa_id)
+    else:
+        recursosDataCenter = RecursoDataCenter.objects.all()
+    return render(request, 'recursodatacenter/listar_recurso_datacenter.html', {'recursosDataCenter': recursosDataCenter})
+
+def cadastrar_recurso_datacenter(request):
+    if request.method == 'POST':
+        form = RecursoDataCenterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listarRecursoDatacenter')
+    else:
+        form = RecursoDataCenterForm()
+    return render(request, 'recursodatacenter/cadastrar_recurso_datacenter.html', {'form': form})
+
+def editar_recurso_datacenter(request, pk):
+    recursosDataCenter = get_object_or_404(RecursoDataCenter, pk=pk)
+    if request.method == 'POST':
+        form = RecursoDataCenterForm(request.POST, instance=recursosDataCenter)
+        if form.is_valid():
+            form.save()
+            return redirect('listarRecursoDatacenter')
+    else:
+        form = RecursoDataCenterForm(instance=recurso)
+    return render(request, 'recursodatacenter/editar_recurso_datacenter.html', {'form': form})
+
+def excluir_recurso_datacenter(request, pk):
+    recursoDataCenter = get_object_or_404(RecursoDataCenter, pk=pk)
+    if request.method == 'POST':
+        recursoDataCenter.delete()
+        return redirect('listarRecursoDatacenter')
+    return render(request, 'recursodatacenter/excluir_recurso_datacenter.html', {'recursoDataCenter': recursoDataCenter})

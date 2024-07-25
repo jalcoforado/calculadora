@@ -64,7 +64,11 @@ urlpatterns = [
     # Módulo Calculo do Custo
     path('calcularcusto/', views.calcular_custo_datacenter, name='calcularCustoDatacenter'),
     #
+    
+    # Passo 2 Cadastrar recurso datacenter
+    path('listarecursodatacenter/', views.listar_recurso_datacenter, name='listarRecursoDatacenter'),
+    path('cadastrarrecursodatacenter/', views.cadastrar_recurso_datacenter, name='cadastrarRecursoDatacenter'),
+    path('editarrecursodatacenter/<int:pk>/', views.editar_recurso_datacenter, name='editarRecursoDatacenter'),
+    path('excluirrecursodatacenter/<int:pk>/', views.excluir_recurso_datacenter, name='excluirRecursoDatacenter'), 
 
 ]
-
-

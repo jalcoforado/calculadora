@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Listagem de Recursos do Datacenter</h1>
+    <a href="{% url 'cadastrarRecursoDatacenter' %}" class="btn btn-success mb-3">Cadastrar Novo Recurso datacenter </a>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Empresa</th>
+                <th>Recurso</th>
+                <th>Valor</th>
+                <th>Detalhe</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for recursoDataCenter in recursosDataCenter %}
+            <tr>
+                <td>{{ recursoDataCenter.empresa.nome }}</td>
+                <td>{{ recursoDataCenter.recurso.nome }}</td>
+                <td>{{ recursoDataCenter.valor }}</td>
+                <td>{{ recursoDataCenter.detalhe }}</td>
+                <td>
+                    <a href="{% url 'editarRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                    <a href="{% url 'excluirRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este recurso?');">Excluir</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

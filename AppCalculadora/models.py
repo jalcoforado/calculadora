@@ -17,7 +17,6 @@ class Empresa(models.Model):
 
 class TipoRecurso(models.Model):
     nome = models.CharField(max_length=255)
-
     def __str__(self):
         return self.nome
 
@@ -28,6 +27,9 @@ class Recurso(models.Model):
 
     def __str__(self):
         return f'{self.tipo_recurso.nome} - {self.descricao}'
+
+
+        
 
 class Servico(models.Model):
     nome = models.CharField(max_length=255)
@@ -133,3 +135,15 @@ class CustoDataCenter(models.Model):
         return f"{self.vm_type} - {self.region} - {self.total_cost}"
 
 
+
+# 2 Passo da metodologia
+
+ 
+class RecursoDataCenter(models.Model):
+    empresa = models.ForeignKey('Empresa', on_delete=models.CASCADE, related_name='Empresa', null=True, blank=True, default=None)
+    recurso = models.ForeignKey('Recurso', on_delete=models.CASCADE, related_name='Recurso', null=True, blank=True, default=None)    
+    valor = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Valor Anual", default=0.00)
+    detalhe = models.CharField(max_length=255, verbose_name="Unidade de Medida")
+    
+    def __str__(self):
+        return f"{self.empresa.nome} -  {self.valor} - {self.detalhe}"

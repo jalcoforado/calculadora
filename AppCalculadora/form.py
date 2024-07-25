@@ -1,9 +1,18 @@
 from cmath import e
 from datetime import date
 from django import forms
-from .models import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, TipoCusto, FuncaoCusto
+from .models import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, RecursoDataCenter, TipoCusto, FuncaoCusto
 from .models import Empresa, TipoRecurso, Recurso, Servico, ServicoRecurso
 
+
+#Formulário de filtro
+class FiltroEmpresaForm(forms.Form):
+    empresa = forms.ModelChoiceField(
+        queryset=Empresa.objects.all(),
+        required=False,
+        label="Filtrar por Empresa",
+        widget=forms.Select(attrs={'onchange': 'this.form.submit();'})
+    )
 
 class EmpresaForm(forms.ModelForm):
     class Meta:
@@ -96,12 +105,20 @@ class EmpresaCustoForm(forms.ModelForm):
             'empresa': forms.Select(attrs={'class': 'form-control'}),
             'custo': forms.Select(attrs={'class': 'form-control'}),
             'valor': forms.NumberInput(attrs={'class': 'form-control'}),
-            'periodicidade': forms.Select(attrs={'class': 'form-control', 'disabled': 'disabled'}),
+            'periodicidade': forms.Select(attrs={'class': 'form-control'}),
             'data_inicio': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'data_fim': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             
         }   
          
-
-
-        
+         
+class RecursoDataCenterForm(forms.ModelForm):
+    class Meta:
+        model = RecursoDataCenter
+        fields = ['empresa', 'recurso', 'valor', 'detalhe']
+        widgets = {
+            'empresa': forms.Select(attrs={'class': 'form-control'}),
+            'recurso': forms.Select(attrs={'class': 'form-control'}),
+            'valor': forms.NumberInput(attrs={'class': 'form-control'}),
+            'detalhe': forms.TextInput(attrs={'class': 'form-control'}),
+        } 

@@ -9,7 +9,7 @@
             <tr>
                 <th>Nome</th>
                 <th>Descrição</th>
-                <th>Recursos</th>
+                <th>Modelo</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -18,11 +18,7 @@
             <tr>
                 <td>{{ servico.nome }}</td>
                 <td>{{ servico.descricao }}</td>
-                <td>
-                    {% for recurso in servico.recursos.all %}
-                        {{ recurso.descricao }}<br>
-                    {% endfor %}
-                </td>
+                <td>{{ servico.modelo }}</td>
                 <td>
                     <a href="{% url 'editarServico' servico.pk %}" class="btn btn-primary btn-sm">Editar</a>
                     <a href="{% url 'excluirServico' servico.pk %}" class="btn btn-danger btn-sm">Excluir</a>

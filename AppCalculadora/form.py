@@ -42,7 +42,7 @@ class ServicoRecursoForm(forms.ModelForm):
 class ServicoForm(forms.ModelForm):
     class Meta:
         model = Servico
-        fields = ['nome', 'descricao']
+        fields = ['modelo', 'nome', 'descricao']
 
 class TipoCustoForm(forms.ModelForm):
     class Meta:

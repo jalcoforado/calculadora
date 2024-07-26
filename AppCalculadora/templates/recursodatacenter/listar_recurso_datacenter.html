@@ -23,7 +23,7 @@
                 <td>{{ recursoDataCenter.detalhe }}</td>
                 <td>
                     <a href="{% url 'editarRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-primary btn-sm">Editar</a>
-                    <a href="{% url 'excluirRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-danger btn-sm" onclick="return confirm('Tem certeza que deseja excluir este recurso?');">Excluir</a>
+                    <a href="{% url 'excluirRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-danger btn-sm">Excluir</a>
                 </td>
             </tr>
             {% endfor %}

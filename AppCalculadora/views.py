@@ -483,8 +483,10 @@ def editar_recurso_datacenter(request, pk):
             form.save()
             return redirect('listarRecursoDatacenter')
     else:
-        form = RecursoDataCenterForm(instance=recurso)
+        form = RecursoDataCenterForm(instance=recursosDataCenter)
     return render(request, 'recursodatacenter/editar_recurso_datacenter.html', {'form': form})
+
+
 
 def excluir_recurso_datacenter(request, pk):
     recursoDataCenter = get_object_or_404(RecursoDataCenter, pk=pk)
@@ -492,3 +494,5 @@ def excluir_recurso_datacenter(request, pk):
         recursoDataCenter.delete()
         return redirect('listarRecursoDatacenter')
     return render(request, 'recursodatacenter/excluir_recurso_datacenter.html', {'recursoDataCenter': recursoDataCenter})
+
+

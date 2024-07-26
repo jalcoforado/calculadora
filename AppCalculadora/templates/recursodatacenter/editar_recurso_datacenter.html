@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Editar Recurso do Datacenter</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_empresa" class="form-label">Empresa</label>
+            {{ form.empresa }}
+            {% if form.empresa.errors %}
+                <div class="error">{{ form.empresa.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_recurso" class="form-label">Recurso</label>
+            {{ form.recurso }}
+            {% if form.recurso.errors %}
+                <div class="error">{{ form.recurso.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_valor" class="form-label">Valor</label>
+            {{ form.valor }}
+            {% if form.valor.errors %}
+                <div class="error">{{ form.valor.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="mb-3">
+            <label for="id_detalhe" class="form-label">Detalhe</label>
+            {{ form.detalhe }}
+            {% if form.detalhe.errors %}
+                <div class="error">{{ form.detalhe.errors }}</div>
+            {% endif %}
+        </div>
+        <div class="d-flex justify-content-between">
+            <a href="{% url 'listarRecursoDatacenter' %}" class="btn btn-secondary">Voltar</a>
+            <button type="submit" class="btn btn-primary">Salvar</button>
+        </div>        
+    </form>
+</div>
+{% endblock %}

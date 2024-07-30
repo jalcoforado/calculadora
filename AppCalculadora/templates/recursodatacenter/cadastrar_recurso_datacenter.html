@@ -33,6 +33,14 @@
                 <div class="error">{{ form.detalhe.errors }}</div>
             {% endif %}
         </div>
+        <div class="mb-3">
+            <label for="id_percentual_finops" class="form-label">Percentual Fonops</label>
+            {{ form.percentual_finops }}
+            {% if form.percentual_finops.errors %}
+                <div class="error">{{ form.percentual_finops.errors }}</div>
+            {% endif %}
+        </div>
+
         <button type="submit" class="btn btn-success">Cadastrar</button>
     </form>
 </div>

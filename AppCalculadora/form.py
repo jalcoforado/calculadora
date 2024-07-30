@@ -1,7 +1,7 @@
 from cmath import e
 from datetime import date
 from django import forms
-from .models import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, RecursoDataCenter, TipoCusto, FuncaoCusto
+from .models import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, ModeloAssinatura, RecursoDataCenter, TipoCusto, FuncaoCusto
 from .models import Empresa, TipoRecurso, Recurso, Servico, ServicoRecurso
 
 
@@ -115,12 +115,13 @@ class EmpresaCustoForm(forms.ModelForm):
 class RecursoDataCenterForm(forms.ModelForm):
     class Meta:
         model = RecursoDataCenter
-        fields = ['empresa', 'recurso', 'valor', 'detalhe']
+        fields = ['empresa', 'recurso', 'valor', 'detalhe', 'percentual_finops']
         widgets = {
             'empresa': forms.Select(attrs={'class': 'form-control'}),
             'recurso': forms.Select(attrs={'class': 'form-control'}),
             'valor': forms.NumberInput(attrs={'class': 'form-control'}),
             'detalhe': forms.TextInput(attrs={'class': 'form-control'}),
+            'percentual_finops': forms.TextInput(attrs={'class': 'form-control'}),
         } 
 
 
@@ -133,4 +134,25 @@ class ServicoRecursoForm(forms.ModelForm):
             'recurso': forms.TextInput(attrs={'class': 'form-control'}),
             'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
         }
-        
+
+class ModeloAssinaturaForm(forms.ModelForm):
+    class Meta:
+        model = ModeloAssinatura
+        fields = ['nome', 'descricao', 'valor_desconto']
+        widgets = {
+            'nome': forms.TextInput(attrs={'class': 'form-control'}),
+            'descricao': forms.TextInput(attrs={'class': 'form-control'}),
+            'valor_desconto': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+        }        
+class RecursoDataCenterFinopsForm(forms.ModelForm):
+    class Meta:
+        model = RecursoDataCenter
+        fields = [
+            'empresa',
+            'recurso',
+            'valor',
+            'detalhe',
+            'percentual_finops',
+            'custo_total_aplicado',
+            'valor_unitario'
+        ]        

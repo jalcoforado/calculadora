@@ -1,8 +1,9 @@
+from decimal import Decimal, InvalidOperation
 from urllib import request
 from django.shortcuts import get_object_or_404, redirect, render
-from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
+from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, ModeloAssinaturaForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
 from django.contrib import messages
-from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, RecursoDataCenter, TipoCusto, TipoRecurso, Recurso, Servico
+from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, ModeloAssinatura, RecursoDataCenter, TipoCusto, TipoRecurso, Recurso, Servico
 from AppCalculadora.models  import Empresa, FuncaoCusto, ServicoRecurso
 from django.db.models import RestrictedError
 
@@ -456,6 +457,24 @@ def excluir_empresa_custo(request, pk):
 
 
 # 2 passo do modelo 
+def calcular_custos(empresa, percentual_finops, valor):
+    try:
+        # Calcular o somatório do campo valor para todos os registros da mesma empresa
+        total_valor = EmpresaCusto.objects.filter(empresa=empresa).aggregate(total=models.Sum('valor'))['total'] or Decimal('0.00')
+        
+        # Certificar que total_valor e percentual_finops são do tipo Decimal
+        total_valor = Decimal(total_valor)
+        percentual_finops = Decimal(percentual_finops)
+        custo_total = (total_valor * percentual_finops) / 100
+        
+        # Calcular o custo_total_aplicado e unitário
+        custo_total_aplicado = custo_total
+        valor_unitario = (custo_total / valor)
+        
+        return custo_total_aplicado, valor_unitario
+    except InvalidOperation:
+        # Tratar a exceção de operação inválida
+        return Decimal('0.00'), Decimal('0.00')
 
 def listar_recurso_datacenter(request):
     empresa_id = request.GET.get('empresa')
@@ -528,3 +547,38 @@ def excluir_servico_recurso(request, id):
         servico_recurso.delete()
         return redirect(reverse('listar_servico_recurso'))
     return render(request, 'servicorecurso/excluir_servico_recurso.html', {'servicorecurso': servico_recurso})
+
+# Modelo Assinatura
+def cadastrar_modelo_assinatura(request):
+    if request.method == 'POST':
+        form = ModeloAssinaturaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listarModeloAssinatura')
+    else:
+        form = ModeloAssinaturaForm()
+    
+    return render(request, 'modeloassinatura/cadastrar_modelo_assinatura.html', {'form': form})
+
+def listar_modelo_assinatura(request):
+    modelos = ModeloAssinatura.objects.all()
+    return render(request, 'modeloassinatura/listar_modelo_assinatura.html', {'modelos': modelos})
+
+def editar_modelo_assinatura(request, pk):
+    modelo = get_object_or_404(ModeloAssinatura, pk=pk)
+    if request.method == 'POST':
+        form = ModeloAssinaturaForm(request.POST, instance=modelo)
+        if form.is_valid():
+            form.save()
+            return redirect('listarModeloAssinatura')
+    else:
+        form = ModeloAssinaturaForm(instance=modelo)
+    
+    return render(request, 'modeloassinatura/editar_modelo_assinatura.html', {'form': form})
+
+def excluir_modelo_assinatura(request, pk):
+    modelo = get_object_or_404(ModeloAssinatura, pk=pk)
+    if request.method == 'POST':
+        modelo.delete()
+        return redirect('listarModeloAssinatura')
+    return render(request, 'modeloassinatura/excluir_modelo_assinatura.html', {'modelo': modelo})

@@ -79,4 +79,9 @@ urlpatterns = [
     path('editarservicorecurso/<int:id>/', views.editar_servico_recurso, name='editarServicoRecurso'),
     path('excluirservicorecurso/<int:id>/', views.excluir_servico_recurso, name='excluirServicoRecurso'),
 
+    # Passo 5 ModeloAssinatura
+    path('cadastrarmodeloassinatura', views.cadastrar_modelo_assinatura, name='cadastrarModeloAssinatura'),
+    path('listarmodeloassinatura/', views.listar_modelo_assinatura, name='listarModeloAssinatura'),
+    path('editarmodeloassinatura/<int:pk>/', views.editar_modelo_assinatura, name='editarModeloAssinatura'),
+    path('excluirmodeloassinatura/<int:pk>/', views.excluir_modelo_assinatura, name='excluirModeloAssinatura'),
 ]

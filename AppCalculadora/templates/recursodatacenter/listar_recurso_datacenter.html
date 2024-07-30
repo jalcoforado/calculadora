@@ -11,6 +11,7 @@
                 <th>Recurso</th>
                 <th>Valor</th>
                 <th>Detalhe</th>
+                <th>Percentual Finops</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -18,9 +19,10 @@
             {% for recursoDataCenter in recursosDataCenter %}
             <tr>
                 <td>{{ recursoDataCenter.empresa.nome }}</td>
-                <td>{{ recursoDataCenter.recurso.nome }}</td>
+                <td>{{ recursoDataCenter.recurso.descricao }}</td>
                 <td>{{ recursoDataCenter.valor }}</td>
                 <td>{{ recursoDataCenter.detalhe }}</td>
+                <td>{{ recursoDataCenter.percentual_finops }}</td>                
                 <td>
                     <a href="{% url 'editarRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-primary btn-sm">Editar</a>
                     <a href="{% url 'excluirRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-danger btn-sm">Excluir</a>

@@ -122,3 +122,15 @@ class RecursoDataCenterForm(forms.ModelForm):
             'valor': forms.NumberInput(attrs={'class': 'form-control'}),
             'detalhe': forms.TextInput(attrs={'class': 'form-control'}),
         } 
+
+
+class ServicoRecursoForm(forms.ModelForm):
+    class Meta:
+        model = ServicoRecurso
+        fields = ['servico', 'recurso', 'quantidade']
+        widgets = {
+            'servico': forms.TextInput(attrs={'class': 'form-control'}),
+            'recurso': forms.TextInput(attrs={'class': 'form-control'}),
+            'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+        

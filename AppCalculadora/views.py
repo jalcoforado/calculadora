@@ -1,6 +1,6 @@
 from urllib import request
 from django.shortcuts import get_object_or_404, redirect, render
-from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, RecursoDataCenterForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
+from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
 from django.contrib import messages
 from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, RecursoDataCenter, TipoCusto, TipoRecurso, Recurso, Servico
 from AppCalculadora.models  import Empresa, FuncaoCusto, ServicoRecurso
@@ -496,3 +496,35 @@ def excluir_recurso_datacenter(request, pk):
     return render(request, 'recursodatacenter/excluir_recurso_datacenter.html', {'recursoDataCenter': recursoDataCenter})
 
 
+# servico recurso
+def listar_servico_recurso(request):
+    servicos_recursos = ServicoRecurso.objects.all()
+    return render(request, 'servicorecurso/listar_servico_recurso.html', {'servicos_recursos': servicos_recursos})
+
+def cadastrar_servico_recurso(request):
+    if request.method == 'POST':
+        form = ServicoRecursoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('listar_servico_recurso'))
+    else:
+        form = ServicoRecursoForm()
+    return render(request, 'servicorecurso/cadastrar_servico_recurso.html', {'form': form})
+
+def editar_servico_recurso(request, id):
+    servico_recurso = get_object_or_404(ServicoRecurso, id=id)
+    if request.method == 'POST':
+        form = ServicoRecursoForm(request.POST, instance=servico_recurso)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('listar_servico_recurso'))
+    else:
+        form = ServicoRecursoForm(instance=servico_recurso)
+    return render(request, 'servicorecurso/editar_servico_recurso.html', {'form': form, 'servicorecurso': servico_recurso})
+
+def excluir_servico_recurso(request, id):
+    servico_recurso = get_object_or_404(ServicoRecurso, id=id)
+    if request.method == 'POST':
+        servico_recurso.delete()
+        return redirect(reverse('listar_servico_recurso'))
+    return render(request, 'servicorecurso/excluir_servico_recurso.html', {'servicorecurso': servico_recurso})

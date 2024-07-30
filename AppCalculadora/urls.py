@@ -24,12 +24,7 @@ urlpatterns = [
     path('editarrecurso/<int:pk>/', views.editar_recurso, name='editarRecurso'),
     path('excluirrecurso/<int:pk>/', views.excluir_recurso, name='excluirRecurso'),
 
-    # Módulo Servico
-    path('listarservico/', views.listar_servico, name='listarServico'),
-    path('cadastrarservico/', views.cadastrar_servico, name='cadastrarServico'),
-    path('editarservico/<int:pk>/', views.editar_servico, name='editarServico'),
-    path('excluirservico/<int:pk>/', views.excluir_servico, name='excluirServico'),    
-
+    
    # Módulo Tipo de Custo
     path('listartipocusto/', views.listar_tipo_custo, name='listarTipoCusto'),
     path('cadastrartipocusto/', views.cadastrar_tipo_custo, name='cadastrarTipoCusto'),
@@ -63,12 +58,25 @@ urlpatterns = [
 
     # Módulo Calculo do Custo
     path('calcularcusto/', views.calcular_custo_datacenter, name='calcularCustoDatacenter'),
-    #
     
+        
     # Passo 2 Cadastrar recurso datacenter
     path('listarecursodatacenter/', views.listar_recurso_datacenter, name='listarRecursoDatacenter'),
     path('cadastrarrecursodatacenter/', views.cadastrar_recurso_datacenter, name='cadastrarRecursoDatacenter'),
     path('editarrecursodatacenter/<int:pk>/', views.editar_recurso_datacenter, name='editarRecursoDatacenter'),
     path('excluirrecursodatacenter/<int:pk>/', views.excluir_recurso_datacenter, name='excluirRecursoDatacenter'), 
+
+     # Módulo Servico
+    path('listarservico/', views.listar_servico, name='listarServico'),
+    path('cadastrarservico/', views.cadastrar_servico, name='cadastrarServico'),
+    path('editarservico/<int:pk>/', views.editar_servico, name='editarServico'),
+    path('excluirservico/<int:pk>/', views.excluir_servico, name='excluirServico'),    
+
+
+    # Passo 4 ServicoRecurso    
+    path('listarservicorecurso', views.listar_servico_recurso, name='listarServicoRecurso'),
+    path('cadastrarservicorecurso/', views.cadastrar_servico_recurso, name='cadastrarServicoRecurso'),
+    path('editarservicorecurso/<int:id>/', views.editar_servico_recurso, name='editarServicoRecurso'),
+    path('excluirservicorecurso/<int:id>/', views.excluir_servico_recurso, name='excluirServicoRecurso'),
 
 ]

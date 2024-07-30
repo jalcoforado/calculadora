@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <h1 class="page-title">Cadastrar Serviço e Recurso</h1>
+    <form method="post" action="{% url 'cadastrar_servico_recurso' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="servico">Serviço</label>
+            <input type="text" class="form-control" id="servico" name="servico" required>
+        </div>
+        <div class="form-group">
+            <label for="recurso">Recurso</label>
+            <input type="text" class="form-control" id="recurso" name="recurso" required>
+        </div>
+        <div class="form-group">
+            <label for="quantidade">Quantidade</label>
+            <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+        </div>
+        <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </form>
+</div>
+{% endblock %}

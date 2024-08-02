@@ -12,6 +12,7 @@
                 <th>Valor</th>
                 <th>Detalhe</th>
                 <th>Percentual Finops</th>
+                <th>Valor Unitário</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -22,7 +23,8 @@
                 <td>{{ recursoDataCenter.recurso.descricao }}</td>
                 <td>{{ recursoDataCenter.valor }}</td>
                 <td>{{ recursoDataCenter.detalhe }}</td>
-                <td>{{ recursoDataCenter.percentual_finops }}</td>                
+                <td>{{ recursoDataCenter.percentual_finops }}</td>  
+                <td>{{ recursoDataCenter.valor_unitario }}</td>                              
                 <td>
                     <a href="{% url 'editarRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-primary btn-sm">Editar</a>
                     <a href="{% url 'excluirRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-danger btn-sm">Excluir</a>

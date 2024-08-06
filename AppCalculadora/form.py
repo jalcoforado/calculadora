@@ -5,6 +5,7 @@ from .models import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, Mo
 from .models import Empresa, TipoRecurso, Recurso, Servico, ServicoRecurso
 
 
+
 #Formulário de filtro
 class FiltroEmpresaForm(forms.Form):
     empresa = forms.ModelChoiceField(
@@ -31,14 +32,22 @@ class RecursoForm(forms.ModelForm):
         fields = ['tipo_recurso', 'descricao', 'detalhes']
 
 class ServicoRecursoForm(forms.ModelForm):
+    servico = forms.ModelChoiceField(
+        queryset=Servico.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
     class Meta:
         model = ServicoRecurso
-        fields = ['recurso', 'quantidade']
+        fields = ['servico', 'recurso', 'quantidade']
         widgets = {
             'recurso': forms.Select(attrs={'class': 'form-control'}),
             'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
-        }       
-
+        }      
+      
+ServicoRecursoInlineFormSet = forms.inlineformset_factory(Servico, ServicoRecurso,fields=['recurso', 'quantidade'],                                                          
+    widgets={'recurso': forms.Select(attrs={'class': 'form-control'}),'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
+    }         
+)
 class ServicoForm(forms.ModelForm):
     class Meta:
         model = Servico
@@ -124,16 +133,6 @@ class RecursoDataCenterForm(forms.ModelForm):
             'percentual_finops': forms.TextInput(attrs={'class': 'form-control'}),
         } 
 
-
-class ServicoRecursoForm(forms.ModelForm):
-    class Meta:
-        model = ServicoRecurso
-        fields = ['servico', 'recurso', 'quantidade']
-        widgets = {
-            'servico': forms.TextInput(attrs={'class': 'form-control'}),
-            'recurso': forms.TextInput(attrs={'class': 'form-control'}),
-            'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
 
 class ModeloAssinaturaForm(forms.ModelForm):
     class Meta:

@@ -1,22 +1,29 @@
 {% extends 'base.html' %}
+
+{% load form_tags %}
+
 {% block content %}
-<div class="container">
-    <h1 class="page-title">Cadastrar Serviço e Recurso</h1>
-    <form method="post" action="{% url 'cadastrar_servico_recurso' %}">
+<div class="container mt-4">
+    <h1 class="page-title">Cadastrar Serviço e Recursos</h1>
+    <form method="post" class="mt-4">
         {% csrf_token %}
-        <div class="form-group">
-            <label for="servico">Serviço</label>
-            <input type="text" class="form-control" id="servico" name="servico" required>
+        <div class="mb-3">
+            <label for="id_servico" class="form-label">Serviço</label>
+            {{ ServicoRecursoForm.servico }}
         </div>
-        <div class="form-group">
-            <label for="recurso">Recurso</label>
-            <input type="text" class="form-control" id="recurso" name="recurso" required>
-        </div>
-        <div class="form-group">
-            <label for="quantidade">Quantidade</label>
-            <input type="number" class="form-control" id="quantidade" name="quantidade" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Cadastrar</button>
+        <h2 class="mt-4">Recursos</h2>
+        {{ servico_recurso_formset.management_form }}
+        {% for form in servico_recurso_formset %}
+            <div class="mb-3">
+                <label for="{{ form.recurso.id_for_label }}" class="form-label">Recurso</label>
+                {{ form.recurso|add_class:"form-control" }}
+            </div>
+            <div class="mb-3">
+                <label for="{{ form.quantidade.id_for_label }}" class="form-label">Quantidade</label>
+                {{ form.quantidade|add_class:"form-control" }}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mt-4">Salvar</button>
     </form>
 </div>
 {% endblock %}

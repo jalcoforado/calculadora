@@ -1,7 +1,8 @@
+from django.core.paginator import Paginator
 from decimal import Decimal, InvalidOperation
 from urllib import request
 from django.shortcuts import get_object_or_404, redirect, render
-from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, ModeloAssinaturaForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm
+from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, ModeloAssinaturaForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm, ServicoRecursoInlineFormSet
 from django.contrib import messages
 from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, ModeloAssinatura, RecursoDataCenter, TipoCusto, TipoRecurso, Recurso, Servico
 from AppCalculadora.models  import Empresa, FuncaoCusto, ServicoRecurso
@@ -370,36 +371,8 @@ def calcular_custo_datacenter(request):
             ip_cost = ip_cost_per_hour.get(ip_type, 0)
             
             total_vm_cost = cost_per_hour * num_vms * hours_per_month
-            total_storage_cost = storage_cost * num_disks * hours_per_month
-            total_ip_cost = ip_cost * num_ips * hours_per_month
-            
-            total_cost = total_vm_cost + total_storage_cost + total_ip_cost
+            total_storage_cost = storage_cost * num_disks 
 
-            # Salvar no banco de dados
-            custo_data_center = CustoDataCenter(
-                region=region,
-                vm_type=vm_type,
-                num_vms=num_vms,
-                os=os,
-                storage_type=storage_type,
-                disk_size=disk_size,
-                num_disks=num_disks,
-                num_ips=num_ips,
-                ip_type=ip_type,
-                hours_per_month=hours_per_month,
-                total_cost=total_cost
-            )
-            custo_data_center.save()
-            
-            context = {
-                'form': form,
-                'total_cost': total_cost,
-            }
-            return render(request, 'calculadoracusto/calcular_custo_datacenter.html', context)
-    else:
-        form = DataCenterCostForm()
-    
-    return render(request, 'calculadoracusto/calcular_custo_datacenter.html', {'form': form})
 
 # Funções Empresa Custo
 def cadastrar_empresa_custo(request):
@@ -516,21 +489,38 @@ def excluir_recurso_datacenter(request, pk):
 
 
 # servico recurso
-def listar_servico_recurso(request):
-    servicos_recursos = ServicoRecurso.objects.all()
-    return render(request, 'servicorecurso/listar_servico_recurso.html', {'servicos_recursos': servicos_recursos})
-
 def cadastrar_servico_recurso(request):
     if request.method == 'POST':
-        form = ServicoRecursoForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse('listar_servico_recurso'))
+        servico_form = ServicoForm(request.POST)        
+        servico_recurso_formset = ServicoRecursoInlineFormSet(request.POST)        
+        if servico_form.is_valid() and servico_recurso_formset.is_valid():
+            servico = servico_form.save()
+            servico_recursos = servico_recurso_formset.save(commit=False)
+            for servico_recurso in servico_recursos:
+                servico_recurso.servico = servico
+                servico_recurso.save()
+            return redirect('listarServicoRecurso')
     else:
-        form = ServicoRecursoForm()
-    return render(request, 'servicorecurso/cadastrar_servico_recurso.html', {'form': form})
+        servico_form = ServicoForm()
+        servico_recurso_formset = ServicoRecursoInlineFormSet()
+    return render(request, 'servicorecurso/cadastrar_servico_recurso.html', {
+        'servico_form': servico_form,
+        'servico_recurso_formset': servico_recurso_formset,
+    })
 
-def editar_servico_recurso(request, id):
+
+
+def listar_servico_recurso(request):
+    servicos_recursos = ServicoRecurso.objects.all()
+    paginator = Paginator(servicos_recursos, 10)  # Mostra 10 recursos por página
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'servicorecurso/listar_servico_recurso.html', {'page_obj': page_obj})
+
+
+def editar_servico_recurso(request, id):    
     servico_recurso = get_object_or_404(ServicoRecurso, id=id)
     if request.method == 'POST':
         form = ServicoRecursoForm(request.POST, instance=servico_recurso)

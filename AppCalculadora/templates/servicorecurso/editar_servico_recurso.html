@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
     <h1 class="page-title">Editar Serviço e Recurso</h1>
-    <form method="post" action="{% url 'editar_servico_recurso' servicorecurso.id %}">
+    <form method="post" action="{% url 'editarServicoRecurso' servicorecurso.id %}">
         {% csrf_token %}
         <div class="form-group">
             <label for="servico">Serviço</label>

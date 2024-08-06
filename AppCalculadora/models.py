@@ -191,3 +191,5 @@ class ModeloAssinatura(models.Model):
 
     def __str__(self):
         return f"{self.nome} - {self.valor_desconto}"   
+
+        

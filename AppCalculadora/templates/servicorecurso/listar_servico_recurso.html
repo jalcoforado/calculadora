@@ -1,8 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
-    <h1 class="page-title">Lista de Serviços e Recursos</h1>
-    <a href="{% url 'cadastrar_servico_recurso' %}" class="btn btn-primary mb-3">Adicionar Novo</a>
+    <h1 class="page-title">Lista de Serviços e Recursos ddd</h1>
+    <a href="{% url 'cadastrarServicoRecurso' %}" class="btn btn-primary mb-3">Adicionar Novo</a>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -19,8 +19,8 @@
                 <td>{{ servicorecurso.recurso.descricao }}</td>
                 <td>{{ servicorecurso.quantidade }}</td>
                 <td>
-                    <a href="{% url 'editar_servico_recurso' servicorecurso.id %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'excluir_servico_recurso' servicorecurso.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                    <a href="{% url 'editarServicoRecurso' servicorecurso.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'excluirServicoRecurso' servicorecurso.id %}" class="btn btn-danger btn-sm">Excluir</a>
                 </td>
             </tr>
             {% endfor %}

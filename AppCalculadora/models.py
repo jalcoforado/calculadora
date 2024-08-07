@@ -27,7 +27,7 @@ class Recurso(models.Model):
     detalhes = models.TextField()
 
     def __str__(self):
-        return f'{self.tipo_recurso.nome} - {self.descricao}'
+        return f'{self.tipo_recurso} - {self.descricao}'
 
 
         
@@ -58,6 +58,7 @@ class ServicoRecurso(models.Model):
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE)
     recurso = models.ForeignKey(Recurso, on_delete=models.CASCADE)
     quantidade = models.DecimalField(max_digits=10, decimal_places=2)
+    
 
     def __str__(self):
         return f'{self.servico.nome} usa {self.quantidade} {self.recurso.descricao}'

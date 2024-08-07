@@ -1,29 +1,36 @@
 {% extends 'base.html' %}
 
-{% load form_tags %}
+{% load static %}
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="page-title">Cadastrar Serviço e Recursos</h1>
+    <h1 class="page-title">Associar recursos aos serviços</h1>
     <form method="post" class="mt-4">
         {% csrf_token %}
-        <div class="mb-3">
-            <label for="id_servico" class="form-label">Serviço</label>
-            {{ ServicoRecursoForm.servico }}
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label for="{{ servico_form.servico.id_for_label }}" class="form-label">Serviço</label>
+                {{ servico_form.servico }}
+            </div>
         </div>
-        <h2 class="mt-4">Recursos</h2>
         {{ servico_recurso_formset.management_form }}
         {% for form in servico_recurso_formset %}
-            <div class="mb-3">
-                <label for="{{ form.recurso.id_for_label }}" class="form-label">Recurso</label>
-                {{ form.recurso|add_class:"form-control" }}
-            </div>
-            <div class="mb-3">
-                <label for="{{ form.quantidade.id_for_label }}" class="form-label">Quantidade</label>
-                {{ form.quantidade|add_class:"form-control" }}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.recurso.id_for_label }}" class="form-label">Recurso</label>
+                        {{ form.recurso }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="{{ form.quantidade.id_for_label }}" class="form-label">Quantidade</label>
+                        {{ form.quantidade }}
+                    </div>
+                </div>
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-primary mt-4">Salvar</button>
+        <button type="submit" class="btn btn-primary">Salvar</button>
     </form>
 </div>
 {% endblock %}

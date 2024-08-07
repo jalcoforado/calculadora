@@ -13,14 +13,14 @@
             </tr>
         </thead>
         <tbody>
-            {% for servicorecurso in servicorecursos %}
+            {% for page_obj in page_objs %}
             <tr>
-                <td>{{ servicorecurso.servico.nome }}</td>
-                <td>{{ servicorecurso.recurso.descricao }}</td>
-                <td>{{ servicorecurso.quantidade }}</td>
+                <td>{{ page_obj.servico.nome }}</td>
+                <td>{{ page_obj.recurso.descricao }}</td>
+                <td>{{ page_obj.quantidade }}</td>
                 <td>
-                    <a href="{% url 'editarServicoRecurso' servicorecurso.id %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'excluirServicoRecurso' servicorecurso.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                    <a href="{% url 'editarServicoRecurso' page_obj.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'excluirServicoRecurso' page_obj.id %}" class="btn btn-danger btn-sm">Excluir</a>
                 </td>
             </tr>
             {% endfor %}

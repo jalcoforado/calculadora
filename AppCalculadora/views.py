@@ -492,22 +492,33 @@ def excluir_recurso_datacenter(request, pk):
 def cadastrar_servico_recurso(request):
     if request.method == 'POST':
         servico_form = ServicoForm(request.POST)        
-        servico_recurso_formset = ServicoRecursoInlineFormSet(request.POST)        
+        servico_recurso_formset = ServicoRecursoInlineFormSet(request.POST)
+        
         if servico_form.is_valid() and servico_recurso_formset.is_valid():
-            servico = servico_form.save()
+            servico = servico_form.save()  # Salva a instância de Servico primeiro
             servico_recursos = servico_recurso_formset.save(commit=False)
             for servico_recurso in servico_recursos:
-                servico_recurso.servico = servico
+                servico_recurso.servico = servico  # Atribui a instância de Servico corretamente
                 servico_recurso.save()
+            servico_recurso_formset.save_m2m()  # Salva muitos-para-muitos, se houver
             return redirect('listarServicoRecurso')
+        else:
+            print("Servico Form Errors:", servico_form.errors)
+            print("Servico Recurso Formset Errors:", servico_recurso_formset.errors)
     else:
-        servico_form = ServicoForm()
+        servico_form = ServicoRecursoForm()  
         servico_recurso_formset = ServicoRecursoInlineFormSet()
+        # Adicionando classes CSS aos campos dos formulários manualmente
+        servico_form.fields['servico'].widget.attrs.update({'class': 'form-control'})
+        for form in servico_recurso_formset:
+            form.fields['recurso'].widget.attrs.update({'class': 'form-control'})
+            form.fields['quantidade'].widget.attrs.update({'class': 'form-control'})
+
+
     return render(request, 'servicorecurso/cadastrar_servico_recurso.html', {
         'servico_form': servico_form,
         'servico_recurso_formset': servico_recurso_formset,
     })
-
 
 
 def listar_servico_recurso(request):
@@ -515,9 +526,9 @@ def listar_servico_recurso(request):
     paginator = Paginator(servicos_recursos, 10)  # Mostra 10 recursos por página
 
     page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    page_objs = paginator.get_page(page_number)
 
-    return render(request, 'servicorecurso/listar_servico_recurso.html', {'page_obj': page_obj})
+    return render(request, 'servicorecurso/listar_servico_recurso.html', {'page_objs': page_objs})
 
 
 def editar_servico_recurso(request, id):    

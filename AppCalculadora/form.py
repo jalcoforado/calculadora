@@ -32,21 +32,20 @@ class RecursoForm(forms.ModelForm):
         fields = ['tipo_recurso', 'descricao', 'detalhes']
 
 class ServicoRecursoForm(forms.ModelForm):
-    servico = forms.ModelChoiceField(
-        queryset=Servico.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
+    servico = forms.ModelChoiceField(queryset=Servico.objects.all(),
+                                      widget=forms.Select(attrs={'class': 'form-control'}))
     class Meta:
         model = ServicoRecurso
         fields = ['servico', 'recurso', 'quantidade']
         widgets = {
+            'servico': forms.Select(attrs={'class': 'form-control'}),
             'recurso': forms.Select(attrs={'class': 'form-control'}),
             'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
         }      
       
 ServicoRecursoInlineFormSet = forms.inlineformset_factory(Servico, ServicoRecurso,fields=['recurso', 'quantidade'],                                                          
-    widgets={'recurso': forms.Select(attrs={'class': 'form-control'}),'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
-    }         
+     widgets={'recurso': forms.Select(attrs={'class': 'form-control'}),'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
+     }         
 )
 class ServicoForm(forms.ModelForm):
     class Meta:

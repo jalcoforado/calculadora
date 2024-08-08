@@ -1,6 +1,7 @@
 from cmath import e
 from datetime import date
 from django import forms
+from django.forms import inlineformset_factory
 from .models import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, ModeloAssinatura, RecursoDataCenter, TipoCusto, FuncaoCusto
 from .models import Empresa, TipoRecurso, Recurso, Servico, ServicoRecurso
 
@@ -29,23 +30,35 @@ class TipoRecursoForm(forms.ModelForm):
 class RecursoForm(forms.ModelForm):
     class Meta:
         model = Recurso
-        fields = ['tipo_recurso', 'descricao', 'detalhes']
+        fields = ['tipo_recurso', 'descricao', 'detalhes','unidade_medida']
 
 class ServicoRecursoForm(forms.ModelForm):
-    servico = forms.ModelChoiceField(queryset=Servico.objects.all(),
-                                      widget=forms.Select(attrs={'class': 'form-control'}))
+    servico = forms.ModelChoiceField(
+        queryset=Servico.objects.all(),
+        widget=forms.Select(attrs={'class': 'form-control'})
+        
+    )
+
     class Meta:
         model = ServicoRecurso
-        fields = ['servico', 'recurso', 'quantidade']
+        fields = ['servico', 'recurso', 'quantidade','detalhe']
         widgets = {
-            'servico': forms.Select(attrs={'class': 'form-control'}),
             'recurso': forms.Select(attrs={'class': 'form-control'}),
-            'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
-        }      
-      
-ServicoRecursoInlineFormSet = forms.inlineformset_factory(Servico, ServicoRecurso,fields=['recurso', 'quantidade'],                                                          
-     widgets={'recurso': forms.Select(attrs={'class': 'form-control'}),'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
-     }         
+            'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),            
+            'detalhe': forms.TextInput(attrs={'class': 'form-control'}),                        
+        }
+
+ServicoRecursoInlineFormSet = inlineformset_factory(
+    Servico,
+    ServicoRecurso,
+    form=ServicoRecursoForm,
+    fields=['recurso', 'quantidade', 'detalhe'],
+    extra=3,
+    widgets={        
+        'recurso': forms.Select(attrs={'class': 'form-control'}),
+        'quantidade': forms.NumberInput(attrs={'class': 'form-control'}),
+        'detalhe': forms.TextInput(attrs={'class': 'form-control'}),                        
+    }
 )
 class ServicoForm(forms.ModelForm):
     class Meta:

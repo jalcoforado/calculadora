@@ -333,7 +333,7 @@ def excluir_custo(request, pk):
 
 # Funções Calculadora
 def calcular_custo_datacenter(request):
-    if request.method == 'POST':
+    if request.method == 'POST':        
         form = DataCenterCostForm(request.POST)
         if form.is_valid():
             region = form.cleaned_data['region']
@@ -372,7 +372,10 @@ def calcular_custo_datacenter(request):
             
             total_vm_cost = cost_per_hour * num_vms * hours_per_month
             total_storage_cost = storage_cost * num_disks 
-
+    else:
+        form = DataCenterCostForm()
+    
+    return render(request, 'calculadoracusto/calcular_custo_datacenter.html', {'form': form})
 
 # Funções Empresa Custo
 def cadastrar_empresa_custo(request):
@@ -491,53 +494,48 @@ def excluir_recurso_datacenter(request, pk):
 # servico recurso
 def cadastrar_servico_recurso(request):
     if request.method == 'POST':
-        servico_form = ServicoForm(request.POST)        
-        servico_recurso_formset = ServicoRecursoInlineFormSet(request.POST)
-        
-        if servico_form.is_valid() and servico_recurso_formset.is_valid():
-            servico = servico_form.save()  # Salva a instância de Servico primeiro
+        servico_id = request.POST.get('servico')
+        servico = get_object_or_404(Servico, id=servico_id)
+        servico_recurso_formset = ServicoRecursoInlineFormSet(request.POST, queryset=ServicoRecurso.objects.none())
+
+        if servico_recurso_formset.is_valid():
             servico_recursos = servico_recurso_formset.save(commit=False)
             for servico_recurso in servico_recursos:
-                servico_recurso.servico = servico  # Atribui a instância de Servico corretamente
+                servico_recurso.servico = servico
                 servico_recurso.save()
-            servico_recurso_formset.save_m2m()  # Salva muitos-para-muitos, se houver
             return redirect('listarServicoRecurso')
         else:
-            print("Servico Form Errors:", servico_form.errors)
             print("Servico Recurso Formset Errors:", servico_recurso_formset.errors)
     else:
-        servico_form = ServicoRecursoForm()  
-        servico_recurso_formset = ServicoRecursoInlineFormSet()
-        # Adicionando classes CSS aos campos dos formulários manualmente
-        servico_form.fields['servico'].widget.attrs.update({'class': 'form-control'})
-        for form in servico_recurso_formset:
-            form.fields['recurso'].widget.attrs.update({'class': 'form-control'})
-            form.fields['quantidade'].widget.attrs.update({'class': 'form-control'})
+        servico_recurso_formset = ServicoRecursoInlineFormSet(queryset=ServicoRecurso.objects.none())
 
+    servicos = Servico.objects.all()
+    
+    # Adicionando classes CSS aos campos dos formulários manualmente
+    for form in servico_recurso_formset:
+        form.fields['recurso'].widget.attrs.update({'class': 'form-control'})
+        form.fields['quantidade'].widget.attrs.update({'class': 'form-control'})
 
     return render(request, 'servicorecurso/cadastrar_servico_recurso.html', {
-        'servico_form': servico_form,
         'servico_recurso_formset': servico_recurso_formset,
+        'servicos': servicos,
     })
-
-
 def listar_servico_recurso(request):
-    servicos_recursos = ServicoRecurso.objects.all()
-    paginator = Paginator(servicos_recursos, 10)  # Mostra 10 recursos por página
+    # Filtra os serviços que têm pelo menos um recurso associado
+    servicos = Servico.objects.filter(servicorecurso__isnull=False).distinct().prefetch_related('servicorecurso_set').order_by('nome')
+    paginator = Paginator(servicos, 10)  # Mostra 10 serviços por página
 
     page_number = request.GET.get('page')
     page_objs = paginator.get_page(page_number)
 
     return render(request, 'servicorecurso/listar_servico_recurso.html', {'page_objs': page_objs})
-
-
 def editar_servico_recurso(request, id):    
     servico_recurso = get_object_or_404(ServicoRecurso, id=id)
     if request.method == 'POST':
         form = ServicoRecursoForm(request.POST, instance=servico_recurso)
         if form.is_valid():
             form.save()
-            return redirect(reverse('listar_servico_recurso'))
+            return redirect('listarServicoRecurso')
     else:
         form = ServicoRecursoForm(instance=servico_recurso)
     return render(request, 'servicorecurso/editar_servico_recurso.html', {'form': form, 'servicorecurso': servico_recurso})
@@ -546,7 +544,7 @@ def excluir_servico_recurso(request, id):
     servico_recurso = get_object_or_404(ServicoRecurso, id=id)
     if request.method == 'POST':
         servico_recurso.delete()
-        return redirect(reverse('listar_servico_recurso'))
+        return redirect('listarServicoRecurso')
     return render(request, 'servicorecurso/excluir_servico_recurso.html', {'servicorecurso': servico_recurso})
 
 # Modelo Assinatura

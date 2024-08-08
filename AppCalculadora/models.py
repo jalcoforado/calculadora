@@ -22,13 +22,24 @@ class TipoRecurso(models.Model):
         return self.nome
 
 class Recurso(models.Model):
+        
+    UNIDADE_MEDIDA_CHOICES = [
+        ('horas de CPU ANO', 'horas de CPU ANO'),
+        ('em gigabytes (GB) por mês', 'em gigabytes (GB) por mês'),
+        ('em gigabytes (GB) Transferidos por mês', 'em gigabytes (GB) Transferidos por mês'),
+        ('eventos monitorados por mês', 'eventos monitorados por mês'),        
+    ]
     tipo_recurso = models.ForeignKey(TipoRecurso, on_delete=models.CASCADE)
     descricao = models.CharField(max_length=255)
     detalhes = models.TextField()
+    unidade_medida = models.CharField(
+        max_length=255,
+        choices=UNIDADE_MEDIDA_CHOICES,
+        default='horas de CPU ANO',
+    )
 
     def __str__(self):
         return f'{self.tipo_recurso} - {self.descricao}'
-
 
         
 
@@ -57,8 +68,8 @@ class Servico(models.Model):
 class ServicoRecurso(models.Model):
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE)
     recurso = models.ForeignKey(Recurso, on_delete=models.CASCADE)
-    quantidade = models.DecimalField(max_digits=10, decimal_places=2)
-    
+    quantidade = models.DecimalField(max_digits=10, decimal_places=2)   
+    detalhe = models.CharField(max_length=80, default="Nada a informar")
 
     def __str__(self):
         return f'{self.servico.nome} usa {self.quantidade} {self.recurso.descricao}'

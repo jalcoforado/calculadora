@@ -1,33 +1,36 @@
 {% extends 'base.html' %}
 
-{% load static %}
-
 {% block content %}
 <div class="container mt-4">
     <h1 class="page-title">Associar recursos aos serviços</h1>
     <form method="post" class="mt-4">
         {% csrf_token %}
         <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="{{ servico_form.servico.id_for_label }}" class="form-label">Serviço</label>
-                {{ servico_form.servico }}
+            <div class="col-md-4">
+                <label for="id_servico" class="form-label">Serviço</label>
+                <select id="id_servico" name="servico" class="form-control">
+                    {% for servico in servicos %}
+                        <option value="{{ servico.id }}">{{ servico.nome }}</option>
+                    {% endfor %}
+                </select>
             </div>
         </div>
         {{ servico_recurso_formset.management_form }}
         {% for form in servico_recurso_formset %}
-            <div class="row">
+            <div class="row mb-3">
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="{{ form.recurso.id_for_label }}" class="form-label">Recurso</label>
-                        {{ form.recurso }}
-                    </div>
+                    <label for="{{ form.recurso.id_for_label }}" class="form-label">Recurso</label>
+                    {{ form.recurso }}
                 </div>
                 <div class="col-md-6">
-                    <div class="mb-3">
-                        <label for="{{ form.quantidade.id_for_label }}" class="form-label">Quantidade</label>
-                        {{ form.quantidade }}
-                    </div>
+                    <label for="{{ form.quantidade.id_for_label }}" class="form-label">Capacidade</label>
+                    {{ form.quantidade }}
                 </div>
+                <div class="col-md-6">
+                    <label for="{{ form.quantidade.id_for_label }}" class="form-label">Informação complementar</label>
+                    {{ form.detalhe }}
+                </div>
+
             </div>
         {% endfor %}
         <button type="submit" class="btn btn-primary">Salvar</button>

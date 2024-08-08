@@ -10,6 +10,7 @@
                 <th>Tipo de Recurso</th>
                 <th>Descrição</th>      
                 <th>Detalhe</th>
+                <th>Unidade Medida</th>                
                 <th>Ações</th>
             </tr>
         </thead>
@@ -19,6 +20,7 @@
                 <td>{{ recurso.tipo_recurso.nome }}</td>
                 <td>{{ recurso.descricao }}</td>
                 <td>{{ recurso.detalhes }}</td>
+                <td>{{ recurso.unidade_medida }}</td>                
                 <td>
                     <a href="{% url 'editarRecurso' recurso.pk %}" class="btn btn-primary btn-sm">Editar</a>
                     <a href="{% url 'excluirRecurso' recurso.pk %}" class="btn btn-danger btn-sm">Excluir</a>

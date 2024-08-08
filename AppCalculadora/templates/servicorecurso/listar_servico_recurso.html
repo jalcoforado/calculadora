@@ -1,30 +1,58 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-4">
-    <h1 class="page-title">Lista de Serviços e Recursos ddd</h1>
+    <h1 class="page-title">Lista de Serviços e Recursos</h1>
     <a href="{% url 'cadastrarServicoRecurso' %}" class="btn btn-primary mb-3">Adicionar Novo</a>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Serviço</th>
-                <th>Recurso</th>
-                <th>Quantidade</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for page_obj in page_objs %}
-            <tr>
-                <td>{{ page_obj.servico.nome }}</td>
-                <td>{{ page_obj.recurso.descricao }}</td>
-                <td>{{ page_obj.quantidade }}</td>
-                <td>
-                    <a href="{% url 'editarServicoRecurso' page_obj.id %}" class="btn btn-warning btn-sm">Editar</a>
-                    <a href="{% url 'excluirServicoRecurso' page_obj.id %}" class="btn btn-danger btn-sm">Excluir</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    
+    {% for servico in page_objs %}
+        <h5>{{ servico.nome }}</h5>
+        {% if servico.servicorecurso_set.exists %}
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Recurso</th>
+                        <th>Capacidade</th>
+                        <th>Unidade Medida</th>                        
+                        <th>Informações complementares</th>                           
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for recurso in servico.servicorecurso_set.all %}
+                    <tr>
+                        <td>{{ recurso.recurso.descricao }}</td>
+                        <td>{{ recurso.quantidade }}</td>
+                        <td>{{ recurso.recurso.unidade_medida }}</td>                        
+                        <td>{{ recurso.detalhe }}</td>                        
+                        <td>
+                            <a href="{% url 'editarServicoRecurso' recurso.id %}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{% url 'excluirServicoRecurso' recurso.id %}" class="btn btn-danger btn-sm">Excluir</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Nenhum recurso associado a este serviço.</p>
+        {% endif %}
+    {% endfor %}
+
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_objs.has_previous %}
+                <a href="?page=1">&laquo; primeira</a>
+                <a href="?page={{ page_objs.previous_page_number }}">anterior</a>
+            {% endif %}
+
+            <span class="current">
+                Página {{ page_objs.number }} de {{ page_objs.paginator.num_pages }}.
+            </span>
+
+            {% if page_objs.has_next %}
+                <a href="?page={{ page_objs.next_page_number }}">próxima</a>
+                <a href="?page={{ page_objs.paginator.num_pages }}">última &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
 </div>
 {% endblock %}

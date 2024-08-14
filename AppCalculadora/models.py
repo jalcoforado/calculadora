@@ -64,7 +64,31 @@ class Servico(models.Model):
     
     def __str__(self):
         return self.nome
+
+class ServicoAgrupado(models.Model):
+    IAAS = 'IAAS'
+    PAAS = 'PAAS'
+    SAAS = 'SAAS'
     
+    MODELO_CHOICES = [
+        (IAAS, 'Infrastructure as a Service (IAAS)'),
+        (PAAS, 'Platform as a Service (PAAS)'),
+        (SAAS, 'Software as a Service (SAAS)'),
+    ]
+    
+    modelo = models.CharField(
+        max_length=255,
+        choices=MODELO_CHOICES,
+        default=IAAS,
+    )
+    nome = models.CharField(max_length=255)
+    descricao = models.TextField()
+    
+    def __str__(self):
+        return self.nome
+
+
+
 class ServicoRecurso(models.Model):
     servico = models.ForeignKey(Servico, on_delete=models.CASCADE)
     recurso = models.ForeignKey(Recurso, on_delete=models.CASCADE)

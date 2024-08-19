@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Calcular Preço do Serviço em Nuvem</h2>
+    <form id="calcular-form" method="post" action="{% url 'listarCalcularCusto' %}">
+        {% csrf_token %}
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <label for="tipo_servico" class="form-label">Tipo de Serviço</label>
+                <select class="form-select" id="tipo_servico" name="tipo_servico" required>
+                    <option value="IAAS">IAAS</option>
+                    <option value="PAAS">PAAS</option>
+                    <option value="SAAS">SAAS</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="servico_recurso" class="form-label">Serviço Recurso</label>
+                <select class="form-select" id="servico_recurso" name="servico_recurso" required>
+                    {% for recurso in servico_recursos %}
+                        <option value="{{ recurso.id }}">{{ recurso.servico.nome }} - {{ recurso.quantidade }} {{ recurso.recurso.unidade_medida }} ({{ recurso.detalhe }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <label for="quantidade" class="form-label">Quantidade de Máquinas</label>
+                <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+            </div>
+            <div class="col-md-3">
+                <label for="quantidade_armazenamento" class="form-label">Armazenamento (GB)</label>
+                <input type="number" class="form-control" id="quantidade_armazenamento" name="quantidade_armazenamento" required>
+            </div>
+            <div class="col-md-3">
+                <label for="tempo_meses" class="form-label">Tempo (Meses)</label>
+                <input type="number" class="form-control" id="tempo_meses" name="tempo_meses" required>
+            </div>
+            <div class="col-md-3">
+                <label for="preco_unitario" class="form-label">Preço Unitário</label>
+                <input type="number" step="0.01" class="form-control" id="preco_unitario" name="preco_unitario" readonly required>
+            </div>
+        </div>
+        <div class="row g-3 mb-4">
+            <div class="col-md-3 offset-md-9">
+                <label for="valor_total" class="form-label">Valor Total</label>
+                <input type="number" step="0.01" class="form-control" id="valor_total" name="valor_total" readonly>
+            </div>
+        </div>
+        <div class="text-end">
+            <button type="button" class="btn btn-secondary" id="adicionar-servico">Adicionar Serviço</button>
+        </div>
+    </form>
+
+    <h3 class="mt-5">Serviços Selecionados</h3>
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Tipo de Serviço</th>
+                    <th>Serviço Recurso</th>
+                    <th>Quantidade</th>
+                    <th>Armazenamento (GB)</th>
+                    <th>Tempo (Meses)</th>
+                    <th>Preço Unitário</th>
+                    <th>Valor Total</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody id="servicos-selecionados">
+                <!-- Os serviços selecionados aparecerão aqui -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    let precoUnitarioArmazenamento = 0;
+
+    function calcularValorTotal() {
+        const quantidade = document.getElementById('quantidade').value;
+        const precoUnitario = document.getElementById('preco_unitario').value;
+        const tempoMeses = document.getElementById('tempo_meses').value;
+        const quantidadeArmazenamento = document.getElementById('quantidade_armazenamento').value;
+
+        if (quantidade && precoUnitario && tempoMeses && quantidadeArmazenamento) {
+            // Convertendo meses para horas
+            const horas = tempoMeses * 730; // 730 horas por mês (aproximadamente)
+            const valorTotal = (quantidade * precoUnitario * horas) + (quantidadeArmazenamento * precoUnitarioArmazenamento);
+            document.getElementById('valor_total').value = valorTotal.toFixed(2);
+        } else {
+            document.getElementById('valor_total').value = '';
+        }
+    }
+
+    // Atualizar valor total quando quantidade, tempo, preço unitário ou armazenamento mudarem
+    document.getElementById('quantidade').addEventListener('input', calcularValorTotal);
+    document.getElementById('tempo_meses').addEventListener('input', calcularValorTotal);
+    document.getElementById('preco_unitario').addEventListener('input', calcularValorTotal);
+    document.getElementById('quantidade_armazenamento').addEventListener('input', calcularValorTotal);
+
+    // Adicionar evento para quando o recurso é selecionado
+    document.getElementById('servico_recurso').addEventListener('change', function() {
+        const servicoRecursoId = this.value;
+        if (servicoRecursoId) {
+            fetch(`/getvalorunitario/?servico_recurso_id=${servicoRecursoId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('preco_unitario').value = data.valor_unitario;
+                precoUnitarioArmazenamento = data.preco_unitario_armazenamento;
+                calcularValorTotal();
+            })
+            .catch(error => {
+                console.error('Erro ao buscar valores unitários:', error);
+            });
+        }
+    });
+
+    document.getElementById('adicionar-servico').addEventListener('click', function() {
+        const tipoServico = document.getElementById('tipo_servico').value;
+        const servicoRecurso = document.getElementById('servico_recurso').options[document.getElementById('servico_recurso').selectedIndex].text;
+        const quantidade = document.getElementById('quantidade').value;
+        const quantidadeArmazenamento = document.getElementById('quantidade_armazenamento').value;
+        const tempoMeses = document.getElementById('tempo_meses').value;
+        const precoUnitario = document.getElementById('preco_unitario').value;
+        const valorTotal = document.getElementById('valor_total').value;
+
+        if (quantidade && quantidadeArmazenamento && tempoMeses && precoUnitario && valorTotal) {
+            const novaLinha = `
+                <tr>
+                    <td>${tipoServico}</td>
+                    <td>${servicoRecurso}</td>
+                    <td>${quantidade}</td>
+                    <td>${quantidadeArmazenamento}</td>
+                    <td>${tempoMeses}</td>
+                    <td>${precoUnitario}</td>
+                    <td>${valorTotal}</td>
+                    <td><button type="button" class="btn btn-danger btn-sm remover-servico">Remover</button></td>
+                </tr>
+            `;
+            document.getElementById('servicos-selecionados').insertAdjacentHTML('beforeend', novaLinha);
+
+            // Limpar os campos após adicionar o serviço
+            document.getElementById('quantidade').value = '';
+            document.getElementById('quantidade_armazenamento').value = '';
+            document.getElementById('tempo_meses').value = '';
+            document.getElementById('preco_unitario').value = '';
+            document.getElementById('valor_total').value = '';
+
+            // Adicionar evento de remoção para o botão "Remover"
+            document.querySelectorAll('.remover-servico').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    this.parentElement.parentElement.remove();
+                });
+            });
+        } else {
+            alert('Por favor, preencha todos os campos.');
+        }
+    });
+</script>
+{% endblock %}

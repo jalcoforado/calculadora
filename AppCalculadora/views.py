@@ -1,8 +1,9 @@
 from django.core.paginator import Paginator
 from decimal import Decimal, InvalidOperation
 from urllib import request
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from AppCalculadora.form import ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, ModeloAssinaturaForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm, ServicoRecursoInlineFormSet
+from AppCalculadora.form import CalcularCustoForm, ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, ModeloAssinaturaForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm, ServicoRecursoInlineFormSet
 from django.contrib import messages
 from AppCalculadora.models  import ComportamentoCusto, Custo, CustoDataCenter, EmpresaCusto, ModeloAssinatura, RecursoDataCenter, TipoCusto, TipoRecurso, Recurso, Servico
 from AppCalculadora.models  import Empresa, FuncaoCusto, ServicoRecurso
@@ -133,6 +134,7 @@ def excluir_recurso(request, pk):
 # Funções Servico
 
 def listar_servico(request):
+
     servicos = Servico.objects.all()
     return render(request, 'servico/listar_servico.html', {'servicos': servicos})
 
@@ -581,3 +583,64 @@ def excluir_modelo_assinatura(request, pk):
         modelo.delete()
         return redirect('listarModeloAssinatura')
     return render(request, 'modeloassinatura/excluir_modelo_assinatura.html', {'modelo': modelo})
+
+
+
+def listarCalcularCusto(request):
+    if request.method == 'POST':
+        form = CalcularCustoForm(request.POST)
+        servico_recursos = ServicoRecurso.objects.all()  # Busque todos os recursos de serviço
+        context = {
+            'servico_recursos': servico_recursos
+        }
+        if form.is_valid():
+            # Processar os dados do formulário
+            pass
+    else:
+        form = CalcularCustoForm()
+    
+    return render(request, 'listar_calcular_custo.html', {'form': form})
+
+def listar_calcular_custo(request):
+    # Lógica da view, se necessário
+    servico_recursos = ServicoRecurso.objects.all()  # Busque todos os recursos de serviço
+    context = {
+        'servico_recursos': servico_recursos
+    }
+    
+    return render(request, 'calculadoracusto/listar_calcular_custo.html',  {'servico_recursos': servico_recursos})
+
+def calcular_preco(request):
+    if request.method == 'POST':
+        tipo_servico = request.POST['tipo_servico']
+        servico_recurso_id = request.POST['servico_recurso']
+        periodo = int(request.POST['periodo'])
+        tamanho_disco = int(request.POST['tamanho_disco'])
+
+        # Lógica para calcular o preço
+        # Exemplo: preço_base + (periodo * custo_mensal) + (tamanho_disco * custo_por_gb)
+        servico_recurso = ServicoRecurso.objects.get(id=servico_recurso_id)
+        preco_base = 100  # Exemplo de preço base
+        custo_mensal = 50  # Exemplo de custo mensal
+        custo_por_gb = 2  # Exemplo de custo por GB
+
+        preco_total = preco_base + (periodo * custo_mensal) + (tamanho_disco * custo_por_gb)
+
+        return HttpResponse(f'O preço total é: R$ {preco_total:.2f}')
+
+
+
+def get_valor_unitario(request):
+    servico_recurso_id = request.GET.get('servico_recurso_id')
+    if servico_recurso_id:
+        try:
+            servico_recurso = ServicoRecurso.objects.get(id=servico_recurso_id)
+            recurso_data_center = RecursoDataCenter.objects.get(recurso=servico_recurso.recurso)
+            recurso_data_center_armazenamento = RecursoDataCenter.objects.get(recurso=servico_recurso.recurso )
+            return JsonResponse({
+                'valor_unitario': recurso_data_center.valor_unitario,
+                'preco_unitario_armazenamento': recurso_data_center.valor_unitario  # Ajuste aqui para o preço de armazenamento
+            })
+        except (ServicoRecurso.DoesNotExist, RecursoDataCenter.DoesNotExist):
+            return JsonResponse({'valor_unitario': 0.00, 'preco_unitario_armazenamento': 0.00})
+    return JsonResponse({'valor_unitario': 0.00, 'preco_unitario_armazenamento': 0.00})

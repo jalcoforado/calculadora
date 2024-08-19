@@ -167,3 +167,18 @@ class RecursoDataCenterFinopsForm(forms.ModelForm):
             'custo_total_aplicado',
             'valor_unitario'
         ]        
+
+
+class CalcularCustoForm(forms.Form):
+    TIPO_SERVICO_CHOICES = [
+        ('IAAS', 'IAAS'),
+        ('PAAS', 'PAAS'),
+        ('SAAS', 'SAAS'),
+    ]
+
+    tipo_servico = forms.ChoiceField(choices=TIPO_SERVICO_CHOICES, label='Tipo de Serviço')
+    servico_recurso = forms.ModelChoiceField(queryset=ServicoRecurso.objects.all(), label='Serviço Recurso')
+    quantidade = forms.IntegerField(label='Quantidade')
+    preco_unitario = forms.DecimalField(max_digits=10, decimal_places=2, label='Preço Unitário')
+    total = forms.DecimalField(max_digits=10, decimal_places=2, label='Total', required=False)        
+    

@@ -59,6 +59,9 @@ urlpatterns = [
     # Módulo Calculo do Custo
     path('calcularcusto/', views.calcular_custo_datacenter, name='calcularCustoDatacenter'),
     #
+    path('calcularpreco/', views.calcular_preco, name='calcularPreco'),
+    path('listarcalcularcusto/', views.listar_calcular_custo, name='listarCalcularCusto'),
+    # Outras URLs
     
     # Passo 2 Cadastrar recurso datacenter
     path('listarecursodatacenter/', views.listar_recurso_datacenter, name='listarRecursoDatacenter'),
@@ -84,4 +87,8 @@ urlpatterns = [
     path('listarmodeloassinatura/', views.listar_modelo_assinatura, name='listarModeloAssinatura'),
     path('editarmodeloassinatura/<int:pk>/', views.editar_modelo_assinatura, name='editarModeloAssinatura'),
     path('excluirmodeloassinatura/<int:pk>/', views.excluir_modelo_assinatura, name='excluirModeloAssinatura'),
+
+    path('getvalorunitario/', views.get_valor_unitario, name='getValorunitario'),
 ]
+
+    

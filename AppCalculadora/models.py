@@ -24,10 +24,10 @@ class TipoRecurso(models.Model):
 class Recurso(models.Model):
         
     UNIDADE_MEDIDA_CHOICES = [
-        ('horas de CPU ANO', 'horas de CPU ANO'),
-        ('em gigabytes (GB) por mês', 'em gigabytes (GB) por mês'),
-        ('em gigabytes (GB) Transferidos por mês', 'em gigabytes (GB) Transferidos por mês'),
-        ('eventos monitorados por mês', 'eventos monitorados por mês'),        
+        ('núcleos de CPU', 'núcleos de CPU'),
+        ('em gigabytes (GB)', 'em gigabytes (GB) '),
+        ('em gigabytes (GB) Transferidos', 'em gigabytes (GB) Transferidos'),
+        ('eventos monitorados', 'eventos monitorados'),        
     ]
     tipo_recurso = models.ForeignKey(TipoRecurso, on_delete=models.CASCADE)
     descricao = models.CharField(max_length=255)
@@ -35,7 +35,7 @@ class Recurso(models.Model):
     unidade_medida = models.CharField(
         max_length=255,
         choices=UNIDADE_MEDIDA_CHOICES,
-        default='horas de CPU ANO',
+        default='núcleos de CPU',
     )
 
     def __str__(self):
@@ -188,36 +188,36 @@ class CustoDataCenter(models.Model):
 
 # 2 Passo da metodologia
 
- 
-class RecursoDataCenter(models.Model):
-    empresa = models.ForeignKey('Empresa', on_delete=models.CASCADE, related_name='Empresa', null=True, blank=True, default=None)
-    recurso = models.ForeignKey('Recurso', on_delete=models.CASCADE, related_name='Recurso', null=True, blank=True, default=None)    
-    valor = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Valor Anual", default=0.00)
-    detalhe = models.CharField(max_length=255, verbose_name="Unidade de Medida")
-    percentual_finops = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
-    custo_total_aplicado = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    valor_unitario = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
-    def save(self, *args, **kwargs):
-        try:
-            # Calcular o somatório do campo valor para todos os registros da mesma empresa
-            total_valor = EmpresaCusto.objects.filter(empresa=self.empresa).aggregate(total=models.Sum('valor'))['total'] or Decimal('0.00')
-            
-            # Certificar que total_valor e percentual_finops são do tipo Decimal
-            total_valor = Decimal(total_valor)
-            percentual_finops = Decimal(self.percentual_finops)
-            custo_total = (total_valor * percentual_finops)/100
-            # Calcular o custo_total_aplicado e unitário
-            self.custo_total_aplicado = custo_total
-            self.valor_unitario = (custo_total / self.valor)
-        except InvalidOperation:
-            # Tratar a exceção de operação inválida
-            self.custo_total_aplicado = Decimal('0.00')
-        
-        # Chamar o método save original
-        super(RecursoDataCenter, self).save(*args, **kwargs)
     
-    def __str__(self):
-        return f"{self.empresa.nome} -  {self.valor} - {self.detalhe}"
+    class RecursoDataCenter(models.Model):
+        empresa = models.ForeignKey('Empresa', on_delete=models.CASCADE, related_name='Empresa', null=True, blank=True, default=None)
+        recurso = models.ForeignKey('Recurso', on_delete=models.CASCADE, related_name='Recurso', null=True, blank=True, default=None)    
+        valor = models.DecimalField(max_digits=12, decimal_places=2, verbose_name="Valor Anual", default=0.00)
+        detalhe = models.CharField(max_length=255, verbose_name="Unidade de Medida")
+        percentual_finops = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+        custo_total_aplicado = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+        valor_unitario = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+        def save(self, *args, **kwargs):
+            try:
+                # Calcular o somatório do campo valor para todos os registros da mesma empresa
+                total_valor = EmpresaCusto.objects.filter(empresa=self.empresa).aggregate(total=models.Sum('valor'))['total'] or Decimal('0.00')
+                
+                # Certificar que total_valor e percentual_finops são do tipo Decimal
+                total_valor = Decimal(total_valor)
+                percentual_finops = Decimal(self.percentual_finops)
+                custo_total = (total_valor * percentual_finops)/100
+                # Calcular o custo_total_aplicado e unitário
+                self.custo_total_aplicado = custo_total
+                self.valor_unitario = (custo_total / self.valor)
+            except InvalidOperation:
+                # Tratar a exceção de operação inválida
+                self.custo_total_aplicado = Decimal('0.00')
+            
+            # Chamar o método save original
+            super(RecursoDataCenter, self).save(*args, **kwargs)
+        
+        def __str__(self):
+            return f"{self.empresa.nome} -  {self.valor} - {self.detalhe}"
     
 # 5 Modelo de assinatura
 class ModeloAssinatura(models.Model):

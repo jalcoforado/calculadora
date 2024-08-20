@@ -9,6 +9,7 @@
             <div class="col-md-6">
                 <label for="tipo_servico" class="form-label">Tipo de Serviço</label>
                 <select class="form-select" id="tipo_servico" name="tipo_servico" required>
+                    <option value="">Selecione um registro</option>
                     <option value="IAAS">IAAS</option>
                     <option value="PAAS">PAAS</option>
                     <option value="SAAS">SAAS</option>
@@ -17,9 +18,8 @@
             <div class="col-md-6">
                 <label for="servico_recurso" class="form-label">Serviço Recurso</label>
                 <select class="form-select" id="servico_recurso" name="servico_recurso" required>
-                    {% for recurso in servico_recursos %}
-                        <option value="{{ recurso.id }}">{{ recurso.servico.nome }} - {{ recurso.quantidade }} {{ recurso.recurso.unidade_medida }} ({{ recurso.detalhe }})</option>
-                    {% endfor %}
+
+                    <!-- As opções serão carregadas dinamicamente -->
                 </select>
             </div>
         </div>
@@ -28,9 +28,10 @@
                 <label for="quantidade" class="form-label">Quantidade de Máquinas</label>
                 <input type="number" class="form-control" id="quantidade" name="quantidade" required>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3" id="armazenamento-container">
                 <label for="quantidade_armazenamento" class="form-label">Armazenamento (GB)</label>
-                <input type="number" class="form-control" id="quantidade_armazenamento" name="quantidade_armazenamento" required>
+                <input type="number" class="form-control" id="quantidade_armazenamento" name="quantidade_armazenamento"
+                    required>
             </div>
             <div class="col-md-3">
                 <label for="tempo_meses" class="form-label">Tempo (Meses)</label>
@@ -38,13 +39,13 @@
             </div>
             <div class="col-md-3">
                 <label for="preco_unitario" class="form-label">Preço Unitário</label>
-                <input type="number" step="0.01" class="form-control" id="preco_unitario" name="preco_unitario" readonly required>
+                <input type="text" class="form-control" id="preco_unitario" name="preco_unitario" readonly required>
             </div>
         </div>
         <div class="row g-3 mb-4">
             <div class="col-md-3 offset-md-9">
-                <label for="valor_total" class="form-label">Valor Total</label>
-                <input type="number" step="0.01" class="form-control" id="valor_total" name="valor_total" readonly>
+                <label for="valor_total" class="form-label">Valor final do serviço</label>
+                <input type="text" class="form-control" id="valor_total" name="valor_total" readonly>
             </div>
         </div>
         <div class="text-end">
@@ -72,51 +73,199 @@
             </tbody>
         </table>
     </div>
+    <div class="p-3 border rounded mt-4" style="background-color: #f8f9fa;">
+        <!-- Linha 1: Valor Total sem desconto e Método de Pagamento -->
+        <div class="row g-3 align-items-center mb-3">
+            <div class="col-md-6 text-start">
+                <h6>Valor Total sem desconto: <span id="somatorio-total">R$ 0,00</span></h6>
+            </div>
+            <div class="col-md-6 text-end">
+                <label for="metodo_pagamento" class="form-label" style="font-size: 0.875rem;">Método de
+                    Pagamento</label>
+                <select class="form-select d-inline-block w-auto" id="metodo_pagamento" name="metodo_pagamento" required
+                    style="font-size: 0.875rem;">
+                    <!-- As opções serão carregadas dinamicamente -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Linha 2: Valor do Desconto -->
+        <div class="row g-3 align-items-center mb-3">
+            <div class="col-md-6 text-start">
+                <h6>Valor do Desconto: <span id="valor-desconto">R$ 0,00</span></h6>
+            </div>
+        </div>
+
+        <!-- Linha 3: Valor Total com Desconto -->
+        <div class="row g-3 align-items-center">
+            <div class="col-md-6 text-start">
+                <h6><strong>Valor Total com Desconto: <span id="valor-total-com-desconto">R$ 0,00</span></strong></h6>
+            </div>
+        </div>
+    </div>7
+
+    <br>
 </div>
 
 <script>
     let precoUnitarioArmazenamento = 0;
+    let capacidade = 1; // Inicializa com 1 para não interferir no cálculo caso o valor não seja carregado
+    let isArmazenamento = false; // Flag para verificar se o recurso é "Armazenamento"
+
+    function formatarMoeda(valor) {
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
 
     function calcularValorTotal() {
-        const quantidade = document.getElementById('quantidade').value;
-        const precoUnitario = document.getElementById('preco_unitario').value;
-        const tempoMeses = document.getElementById('tempo_meses').value;
-        const quantidadeArmazenamento = document.getElementById('quantidade_armazenamento').value;
+        const quantidade = parseFloat(document.getElementById('quantidade').value) || 0;
+        const precoUnitario = parseFloat(document.getElementById('preco_unitario').dataset.valor) || 0;
+        const tempoMeses = parseFloat(document.getElementById('tempo_meses').value) || 0;
+        const quantidadeArmazenamento = parseFloat(document.getElementById('quantidade_armazenamento').value) || 0;
 
-        if (quantidade && precoUnitario && tempoMeses && quantidadeArmazenamento) {
-            // Convertendo meses para horas
-            const horas = tempoMeses * 730; // 730 horas por mês (aproximadamente)
-            const valorTotal = (quantidade * precoUnitario * horas) + (quantidadeArmazenamento * precoUnitarioArmazenamento);
-            document.getElementById('valor_total').value = valorTotal.toFixed(2);
+        let valorTotal;
+
+        if (isArmazenamento) {
+            // Se o recurso for "Armazenamento", usar a fórmula específica
+            valorTotal = quantidade * capacidade * precoUnitarioArmazenamento * tempoMeses;
         } else {
-            document.getElementById('valor_total').value = '';
+            // Fórmula padrão
+            const horas = tempoMeses * 730; // 730 horas por mês (aproximadamente)
+            valorTotal = quantidade * precoUnitario * horas * capacidade + (quantidadeArmazenamento * precoUnitarioArmazenamento * tempoMeses);
+        }
+
+        document.getElementById('valor_total').value = formatarMoeda(valorTotal);
+    }
+
+    function atualizarSomatorio() {
+        let somatorio = 0;
+        document.querySelectorAll('#servicos-selecionados tr').forEach(function (row) {
+            const valorTotal = row.querySelector('td:nth-child(7)').textContent.replace('R$', '').replace(/\./g, '').replace(',', '.').trim();
+            somatorio += parseFloat(valorTotal) || 0;
+        });
+        document.getElementById('somatorio-total').textContent = formatarMoeda(somatorio);
+    }
+
+    function verificarArmazenamento() {
+        const armazenamentoContainer = document.getElementById('armazenamento-container');
+        if (isArmazenamento) {
+            armazenamentoContainer.style.display = 'none';
+        } else {
+            armazenamentoContainer.style.display = 'block';
         }
     }
 
-    // Atualizar valor total quando quantidade, tempo, preço unitário ou armazenamento mudarem
+
+    function carregarServicos(tipoServico) {
+        const servicoRecursoSelect = document.getElementById('servico_recurso');
+        servicoRecursoSelect.innerHTML = ''; // Limpa as opções anteriores
+
+        // Carregar os serviços filtrados via AJAX
+        fetch(`/getservicos/?tipo_servico=${tipoServico}`)
+            .then(response => response.json())
+            .then(data => {
+                // Adiciona a opção "Selecione um serviço"
+                const optionDefault = document.createElement('option');
+                optionDefault.value = '';
+                optionDefault.textContent = 'Selecione um serviço';
+                servicoRecursoSelect.appendChild(optionDefault);
+
+                // Preenche o select com os serviços carregados
+                data.servicos.forEach(servico => {
+                    const option = document.createElement('option');
+                    option.value = servico.id;
+                    option.textContent = `${servico.servico__nome} - ${servico.quantidade} ${servico.recurso__unidade_medida} (${servico.detalhe})`;
+                    servicoRecursoSelect.appendChild(option);
+                });
+
+                // Opcional: disparar o evento 'change' se necessário
+                servicoRecursoSelect.dispatchEvent(new Event('change'));
+
+            })
+            .catch(error => console.error('Erro ao carregar serviços:', error));
+    }
+
+    function carregarMetodosPagamento() {
+        const metodoPagamentoSelect = document.getElementById('metodo_pagamento');
+        metodoPagamentoSelect.innerHTML = ''; // Limpa as opções anteriores
+
+        // Carregar os métodos de pagamento via AJAX
+        fetch(`/getmetodospagamento/`)
+            .then(response => response.json())
+            .then(data => {
+                // Adiciona a opção "Selecione um serviço"
+                const optionDefault = document.createElement('option');
+                optionDefault.value = '';
+                optionDefault.textContent = 'Selecione uma forma de contratação';
+                metodoPagamentoSelect.appendChild(optionDefault);
+                data.metodos.forEach(metodo => {
+                    const option = document.createElement('option');
+                    option.value = metodo.id;
+                    option.textContent = metodo.nome;
+                    option.dataset.valor_desconto = metodo.valor_desconto;
+                    metodoPagamentoSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erro ao carregar métodos de pagamento:', error));
+    }
+
+    function calcularValorTotalComDesconto() {
+        const valorTotal = parseFloat(document.getElementById('somatorio-total').textContent.replace('R$', '').replace(/\./g, '').replace(',', '.')) || 0;
+        const metodoPagamentoSelect = document.getElementById('metodo_pagamento');
+        const desconto = parseFloat(metodoPagamentoSelect.options[metodoPagamentoSelect.selectedIndex].dataset.valor_desconto) || 0;
+
+        const valorDesconto = valorTotal * (desconto / 100);
+        const valorTotalComDesconto = valorTotal - valorDesconto;
+
+        document.getElementById('valor-desconto').textContent = formatarMoeda(valorDesconto);
+        document.getElementById('valor-total-com-desconto').textContent = formatarMoeda(valorTotalComDesconto);
+    }
+    document.getElementById('metodo_pagamento').addEventListener('change', calcularValorTotalComDesconto);
+    
+    document.getElementById('tipo_servico').addEventListener('change', function () {
+        const tipoServico = this.value;
+        carregarServicos(tipoServico);
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        carregarMetodosPagamento(); // Carregar os métodos de pagamento ao carregar a página
+    });
+
     document.getElementById('quantidade').addEventListener('input', calcularValorTotal);
     document.getElementById('tempo_meses').addEventListener('input', calcularValorTotal);
     document.getElementById('preco_unitario').addEventListener('input', calcularValorTotal);
     document.getElementById('quantidade_armazenamento').addEventListener('input', calcularValorTotal);
 
-    // Adicionar evento para quando o recurso é selecionado
-    document.getElementById('servico_recurso').addEventListener('change', function() {
+    document.getElementById('servico_recurso').addEventListener('change', function () {
         const servicoRecursoId = this.value;
+        const servicoRecursoTexto = this.options[this.selectedIndex].text;
+
+        isArmazenamento = servicoRecursoTexto.includes("Armazenamento");
+
+        verificarArmazenamento();
+
         if (servicoRecursoId) {
             fetch(`/getvalorunitario/?servico_recurso_id=${servicoRecursoId}`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('preco_unitario').value = data.valor_unitario;
-                precoUnitarioArmazenamento = data.preco_unitario_armazenamento;
-                calcularValorTotal();
-            })
-            .catch(error => {
-                console.error('Erro ao buscar valores unitários:', error);
-            });
+                .then(response => response.json())
+                .then(data => {
+                    // Verifique se data.valor_unitario está vindo corretamente
+                    if (data.valor_unitario !== undefined && data.valor_unitario !== null) {
+                        document.getElementById('preco_unitario').dataset.valor = data.valor_unitario;
+                        document.getElementById('preco_unitario').value = formatarMoeda(data.valor_unitario);
+                    } else {
+                        console.error('Valor unitário não encontrado ou inválido');
+                    }
+                    precoUnitarioArmazenamento = data.preco_unitario_armazenamento || 0;
+                    capacidade = data.capacidade || 1; // Use a quantidade retornada como capacidade
+                    calcularValorTotal();
+                    calcularValorTotalComDesconto();  // Recalcula o desconto
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar valores unitários:', error);
+                });
         }
     });
 
-    document.getElementById('adicionar-servico').addEventListener('click', function() {
+    document.getElementById('adicionar-servico').addEventListener('click', function () {
         const tipoServico = document.getElementById('tipo_servico').value;
         const servicoRecurso = document.getElementById('servico_recurso').options[document.getElementById('servico_recurso').selectedIndex].text;
         const quantidade = document.getElementById('quantidade').value;
@@ -125,13 +274,13 @@
         const precoUnitario = document.getElementById('preco_unitario').value;
         const valorTotal = document.getElementById('valor_total').value;
 
-        if (quantidade && quantidadeArmazenamento && tempoMeses && precoUnitario && valorTotal) {
+        if (quantidade && (isArmazenamento || quantidadeArmazenamento) && tempoMeses && precoUnitario && valorTotal) {
             const novaLinha = `
                 <tr>
                     <td>${tipoServico}</td>
                     <td>${servicoRecurso}</td>
                     <td>${quantidade}</td>
-                    <td>${quantidadeArmazenamento}</td>
+                    <td>${isArmazenamento ? '-' : quantidadeArmazenamento}</td>
                     <td>${tempoMeses}</td>
                     <td>${precoUnitario}</td>
                     <td>${valorTotal}</td>
@@ -139,6 +288,9 @@
                 </tr>
             `;
             document.getElementById('servicos-selecionados').insertAdjacentHTML('beforeend', novaLinha);
+
+            atualizarSomatorio();
+            calcularValorTotalComDesconto();  // Atualiza o valor total com desconto
 
             // Limpar os campos após adicionar o serviço
             document.getElementById('quantidade').value = '';
@@ -148,9 +300,11 @@
             document.getElementById('valor_total').value = '';
 
             // Adicionar evento de remoção para o botão "Remover"
-            document.querySelectorAll('.remover-servico').forEach(function(btn) {
-                btn.addEventListener('click', function() {
+            document.querySelectorAll('.remover-servico').forEach(function (btn) {
+                btn.addEventListener('click', function () {
                     this.parentElement.parentElement.remove();
+                    atualizarSomatorio();
+                    calcularValorTotalComDesconto();
                 });
             });
         } else {

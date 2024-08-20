@@ -152,7 +152,7 @@ def cadastrar_servico(request):
 def editar_servico(request, pk):
     servico = get_object_or_404(Servico, pk=pk)
     if request.method == 'POST':
-        form = RecursoForm(request.POST, instance=servico)
+        form = ServicoForm(request.POST, instance=servico)
         if form.is_valid():
             form.save()
             messages.success(request, 'Servico atualizado com sucesso!')
@@ -635,12 +635,31 @@ def get_valor_unitario(request):
     if servico_recurso_id:
         try:
             servico_recurso = ServicoRecurso.objects.get(id=servico_recurso_id)
-            recurso_data_center = RecursoDataCenter.objects.get(recurso=servico_recurso.recurso)
-            recurso_data_center_armazenamento = RecursoDataCenter.objects.get(recurso=servico_recurso.recurso )
+            recurso_data_center = RecursoDataCenter.objects.get(recurso=servico_recurso.recurso)            
+            
+            # Obter o primeiro recurso de armazenamento correspondente
+            recurso_armazenamento = RecursoDataCenter.objects.filter(recurso__descricao='Armazenamento em disco').first()
+            
+            valor_unitario_armazenamento = recurso_armazenamento.valor_unitario if recurso_armazenamento else 0.00
+            quantidade = servico_recurso.quantidade
+            print(quantidade)
+            print(recurso_data_center.valor_unitario)
             return JsonResponse({
                 'valor_unitario': recurso_data_center.valor_unitario,
-                'preco_unitario_armazenamento': recurso_data_center.valor_unitario  # Ajuste aqui para o preço de armazenamento
+                'preco_unitario_armazenamento': valor_unitario_armazenamento,  # Ajuste aqui para o preço de armazenamento
+                'capacidade': quantidade  # Aqui o campo 'quantidade' é usado como 'capacidade'
             })
         except (ServicoRecurso.DoesNotExist, RecursoDataCenter.DoesNotExist):
             return JsonResponse({'valor_unitario': 0.00, 'preco_unitario_armazenamento': 0.00})
     return JsonResponse({'valor_unitario': 0.00, 'preco_unitario_armazenamento': 0.00})
+
+def get_servicos(request):
+    tipo_servico = request.GET.get('tipo_servico')
+    servicos = ServicoRecurso.objects.filter(servico__modelo=tipo_servico).values('id', 'servico__nome', 'quantidade', 'recurso__unidade_medida', 'detalhe')
+    return JsonResponse({'servicos': list(servicos)})
+
+def get_metodos_pagamento(request):
+    metodos = ModeloAssinatura.objects.values('id', 'nome', 'valor_desconto')
+    data = [{'id': metodo['id'], 'nome': metodo['nome'], 'valor_desconto': metodo['valor_desconto']} for metodo in metodos]
+    return JsonResponse({'metodos': data})
+

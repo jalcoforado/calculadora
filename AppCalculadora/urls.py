@@ -89,6 +89,10 @@ urlpatterns = [
     path('excluirmodeloassinatura/<int:pk>/', views.excluir_modelo_assinatura, name='excluirModeloAssinatura'),
 
     path('getvalorunitario/', views.get_valor_unitario, name='getValorunitario'),
+    path('getservicos/', views.get_servicos, name='getServicos'),    
+    path('getmetodospagamento/', views.get_metodos_pagamento, name='getMetodosPagamento'),        
+
+    
 ]
 
     

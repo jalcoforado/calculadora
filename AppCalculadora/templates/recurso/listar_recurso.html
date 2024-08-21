@@ -2,8 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="page-title">Listagem de Recursos</h1>
-    <a href="{% url 'cadastrarRecurso' %}" class="btn btn-success mb-3">Cadastrar Novo Recurso</a>
+    <h1 class="page-title">Listagem de Recursos</h1>    
     <table class="table table-striped">
         <thead>
             <tr>
@@ -23,11 +22,15 @@
                 <td>{{ recurso.unidade_medida }}</td>                
                 <td>
                     <a href="{% url 'editarRecurso' recurso.pk %}" class="btn btn-primary btn-sm">Editar</a>
+                </td>                    
+                <td>                
                     <a href="{% url 'excluirRecurso' recurso.pk %}" class="btn btn-danger btn-sm">Excluir</a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <br>
+    <a href="{% url 'cadastrarRecurso' %}" class="btn btn-primary mb-3">Adcionar Novo Recurso</a>
 </div>
 {% endblock %}

@@ -2,8 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="page-title">Listagem de Recursos do Datacenter</h1>
-    <a href="{% url 'cadastrarRecursoDatacenter' %}" class="btn btn-success mb-3">Cadastrar Novo Recurso datacenter </a>
+    <h1 class="page-title">Listagem de Recursos do Datacenter</h1>    
     <table class="table table-striped">
         <thead>
             <tr>
@@ -27,11 +26,14 @@
                 <td>{{ recursoDataCenter.valor_unitario }}</td>                              
                 <td>
                     <a href="{% url 'editarRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-primary btn-sm">Editar</a>
-                    <a href="{% url 'excluirRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-danger btn-sm">Excluir</a>
-                </td>
+                </td>                    
+                <td>
+                    <a href="{% url 'excluirRecursoDatacenter' recursoDataCenter.pk %}" class="btn btn-danger btn-sm">Excluir</a>                    
+                </td>                
             </tr>
             {% endfor %}
         </tbody>
     </table>
+    <a href="{% url 'cadastrarRecursoDatacenter' %}" class="btn btn-primary">Adcionar Novo Recurso datacenter </a>
 </div>
 {% endblock %}

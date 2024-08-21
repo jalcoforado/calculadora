@@ -3,7 +3,6 @@
 {% block content %}
 <div class="container mt-4">
     <h2>Lista de Tipos de pagamento</h2>
-    <a href="{% url 'cadastrarModeloAssinatura' %}" class="btn btn-primary mb-3">Adicionar Novo Modelo</a>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -21,7 +20,7 @@
                 <td>{{ modelo.valor_desconto }}</td>
 
                 <td>
-                    <a href="{% url 'editarModeloAssinatura' modelo.id %}" class="btn btn-warning btn-sm">Editar</a>
+                    <a href="{% url 'editarModeloAssinatura' modelo.id %}" class="btn btn-primary btn-sm">Editar</a>
                 </td>    
                 <td>                    
                     <a href="{% url 'excluirModeloAssinatura' modelo.id %}" class="btn btn-danger btn-sm">Excluir</a>
@@ -30,5 +29,7 @@
             {% endfor %}
         </tbody>
     </table>
+    <br>
+    <a href="{% url 'cadastrarModeloAssinatura' %}" class="btn btn-primary mb-3">Adicionar Novo Modelo</a>
 </div>
 {% endblock %}

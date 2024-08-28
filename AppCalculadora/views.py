@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from decimal import Decimal, InvalidOperation
 from urllib import request
+from django.db.models import Sum
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from AppCalculadora.form import CalcularCustoForm, ComportamentoCustoForm, CustoForm, DataCenterCostForm, EmpresaCustoForm, EmpresaForm, FuncaoCustoForm, ModeloAssinaturaForm, RecursoDataCenterForm, ServicoRecursoForm,  TipoCustoForm, TipoRecursoForm, RecursoForm, ServicoForm, ServicoRecursoInlineFormSet
@@ -663,3 +664,23 @@ def get_metodos_pagamento(request):
     data = [{'id': metodo['id'], 'nome': metodo['nome'], 'valor_desconto': metodo['valor_desconto']} for metodo in metodos]
     return JsonResponse({'metodos': data})
 
+
+def get_dashboard(request):
+    recursos = RecursoDataCenter.objects.all()
+    dados_graficos = []
+
+    for recurso in recursos:
+        capacidade_total = recurso.valor        
+        print(capacidade_total)
+        capacidade_alocada = ServicoRecurso.objects.filter(recurso=recurso.recurso).aggregate(Sum('quantidade'))['quantidade__sum'] or 0
+        print(capacidade_alocada)
+        dados_graficos.append({
+            'descricao': recurso.recurso.descricao,
+            'capacidade_total': capacidade_total,
+            'capacidade_alocada': capacidade_alocada
+        })
+
+    context = {
+        'dados_graficos': dados_graficos
+    }
+    return render(request, 'get_dashboard.html', context)

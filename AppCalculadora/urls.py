@@ -92,6 +92,8 @@ urlpatterns = [
     path('getservicos/', views.get_servicos, name='getServicos'),    
     path('getmetodospagamento/', views.get_metodos_pagamento, name='getMetodosPagamento'),        
 
+    path('getdashboard/', views.get_dashboard, name='getDashboard'),
+    # outras URLs...
     
 ]
 
